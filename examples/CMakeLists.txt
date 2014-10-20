@@ -1,0 +1,5 @@
+include_directories(${OpenSim_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR})
+link_directories(${OpenSim_LIB_DIR})
+#add_subdirectory(cart)
+#add_subdirectory(projectile)
+add_subdirectory(sphere)
