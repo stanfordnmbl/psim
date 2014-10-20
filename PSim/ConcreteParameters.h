@@ -12,12 +12,25 @@ OpenSim_DECLARE_CONCRETE_OBJECT(PSim::CoordinateInitialValueParameter,
 public:
     /// @name Property declarations
     /// @{
-    OpenSim_DECLARE_PROPERTY(coordinate, std::string,
+    OpenSim_DECLARE_PROPERTY(coordinate_name, std::string,
             "Name of the coordinate.");
     /// @}
+
+    CoordinateInitialValueParameter()
+    {
+        constructProperties();
+    }
+
     void apply(const double param, Model& model, SimTK::State& initState)
             const override {
-        model.getCoordinateSet().get(get_coordinate()).setValue(initState, param);
+        model.getCoordinateSet().get(get_coordinate_name()).
+                setValue(initState, param);
+    }
+
+private:
+    void constructProperties()
+    {
+        constructProperty_coordinate_name("");
     }
 
 };
@@ -29,13 +42,19 @@ OpenSim_DECLARE_CONCRETE_OBJECT(PSim::CoordinateInitialSpeedParameter,
 public:
     /// @name Property declarations
     /// @{
-    OpenSim_DECLARE_PROPERTY(coordinate, std::string,
+    OpenSim_DECLARE_PROPERTY(coordinate_name, std::string,
             "Name of the coordinate.");
     /// @}
     void apply(const double param, Model& model, SimTK::State& initState)
             const override {
-        model.updCoordinateSet().get(get_coordinate()).
+        model.updCoordinateSet().get(get_coordinate_name()).
             setSpeedValue(initState, param);
+    }
+
+private:
+    void constructProperties()
+    {
+        constructProperty_coordinate_name("");
     }
 
 };

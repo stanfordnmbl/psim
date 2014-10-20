@@ -1,5 +1,3 @@
-#include <OpenSim/Common/Object.h>
-
 #ifndef PSIM_TOOL_H_
 #define PSIM_TOOL_H_
 

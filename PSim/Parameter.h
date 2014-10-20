@@ -28,7 +28,7 @@ namespace PSim {
 */
 class Parameter : public OpenSim::Object
 {
-OpenSim_DECLARE_ABSTRACT_OBJECT(PSim::Parameter, OpenSim::Object);
+OpenSim_DECLARE_CONCRETE_OBJECT(PSim::Parameter, OpenSim::Object);
 public:
 
     /// @name Property declarations
@@ -55,7 +55,7 @@ public:
     /// This is the core method of this class. Apply the given
     /// parameter to the Model.
     virtual void apply(const double param,
-            Model& model, SimTK::State& initState) const = 0;
+            Model& model, SimTK::State& initState) const {}
 
     /// This is used to compute a value that can be sent to
     /// to the optimizer (e.g., for initial parameters).

@@ -22,6 +22,17 @@ public:
     OpenSim_DECLARE_PROPERTY(value, double, "Value of the PSim::Parameter.")
     /// @}
 
+    ParameterValue()
+    {
+        constructProperties();
+    }
+
+private:
+    void constructProperties()
+    {
+        constructProperty_value(0);
+    }
+
 };
 
 // TODO do I need "typename"?

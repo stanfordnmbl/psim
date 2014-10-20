@@ -5,15 +5,20 @@ namespace PSim {
 
 Tool::Tool()
 {
+    constructProperties();
     checkForUnusedInitialGuesses();
 }
 
 void Tool::constructProperties() {
     constructProperty_model_file("Unassigned");
+
     constructProperty_initial_time(0);
     constructProperty_final_time(1);
+
     constructProperty_parameters();
-    constructProperty_initial_guess(ParameterValueSet());
+
+    ParameterValueSet initial_guess;
+    constructProperty_initial_guess(initial_guess);
 }
 
 unsigned int Tool::numOptimizerParameters() const
@@ -137,6 +142,8 @@ ParameterValueSet Tool::run() const
     // Create an Optimizer.
     // ====================
     SimTK::Optimizer opt(optsys);
+    // TODO don't bother when using CMAES.
+    opt.useNumericalGradient(true);
 
     // Optimize!
     // =========
@@ -194,7 +201,7 @@ SimTK::Real Tool::evaluateObjectives(const ParameterValueSet& pvalset,
         const Model& model,
         const SimTK::State& finalState) const
 {
-    return pow(pvalset[0].get_value(), 2);
+    return pow(pvalset[0].get_value() - 2, 2);
 }
 
 } // namespace PSim
