@@ -17,6 +17,8 @@ void Tool::constructProperties() {
 
     constructProperty_parameters();
 
+    constructProperty_objectives();
+
     ParameterValueSet initial_guess;
     constructProperty_initial_guess(initial_guess);
 }
@@ -201,7 +203,14 @@ SimTK::Real Tool::evaluateObjectives(const ParameterValueSet& pvalset,
         const Model& model,
         const SimTK::State& finalState) const
 {
-    return pow(pvalset[0].get_value() - 2, 2);
+    SimTK::Real f = 0;
+    for (unsigned int io = 0; io < getProperty_objectives().size(); ++io) {
+        const Objective &obj = get_objectives(io);
+        if (obj.get_enabled()) {
+            f += obj.get_weight() * obj.evaluate(pvalset, model, finalState);
+        }
+    }
+    return f;
 }
 
 } // namespace PSim

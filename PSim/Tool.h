@@ -5,6 +5,10 @@
 
 #include "Parameter.h"
 #include "ParameterValue.h"
+#include "Objective.h"
+
+// TODO put this line in all header files with properties.
+using namespace OpenSim;
 
 namespace PSim {
 
@@ -23,14 +27,14 @@ public:
             "The time at which the simulations end (seconds).");
     OpenSim_DECLARE_LIST_PROPERTY(parameters, Parameter,
             "Optimization parameters.");
+    OpenSim_DECLARE_LIST_PROPERTY(objectives, PSim::Objective,
+            "Terms of the optimization objective function.");
     OpenSim_DECLARE_PROPERTY(initial_guess, ParameterValueSet,
             "Values of parameters used in initial guess in the optimization "
             "(unnormalized). For parameters that are left out in this object, "
             "the parameter's default value is used. If you supply values "
             "for parameters that are not set to be optimized, those values "
             "are ignored.");
-//    OpenSim_DECLARE_PROPERTY(objectives, PSim::Objective,
-//            "Terms of the optimization objective function.");
     /// @}
 
     Tool();

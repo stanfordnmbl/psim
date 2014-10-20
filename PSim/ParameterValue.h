@@ -4,6 +4,8 @@
 #include <OpenSim/Common/Object.h>
 #include <OpenSim/Common/Set.h>
 
+using namespace OpenSim;
+
 namespace PSim {
 /**
  * Stores the value of a parameter. This value is *not* scaled.
@@ -15,8 +17,8 @@ namespace PSim {
 class ParameterValue : public OpenSim::Object
 {
 OpenSim_DECLARE_CONCRETE_OBJECT(PSim::ParameterValue, OpenSim::Object);
-
 public:
+
     /// @name Property declarations
     /// @{
     OpenSim_DECLARE_PROPERTY(value, double, "Value of the PSim::Parameter.")
@@ -36,6 +38,7 @@ private:
 };
 
 // TODO do I need "typename"?
+// TODO for serialization, make this a class? or just register it?
 typedef typename OpenSim::Set<PSim::ParameterValue> ParameterValueSet;
 
 } // namespace PSim

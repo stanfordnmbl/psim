@@ -44,7 +44,7 @@ public:
     OpenSim_DECLARE_PROPERTY(upper_opt, double,
             "The value of upper_limit used in the optimizer. Default: 1");
     OpenSim_DECLARE_PROPERTY(default_value, double,
-            "Value (unnormalized) if not being optimized; and default initial guess.");
+            "Value used if optimize=false; & default initial guess. Default: 0.");
     /// @}
 
     Parameter();
