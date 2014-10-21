@@ -15,7 +15,7 @@ int OptimizerSystem::objectiveFunc(const SimTK::Vector& parameters,
 {
     // Initialize model and state.
     // ===========================
-    Model model(m_pstool.get_model_file());
+    Model model(m_pstool.get_model());
     SimTK::State& state = model.initSystem();
 
     // Update model and initial state with parameters.

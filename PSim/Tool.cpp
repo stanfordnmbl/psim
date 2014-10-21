@@ -10,7 +10,7 @@ Tool::Tool()
 }
 
 void Tool::constructProperties() {
-    constructProperty_model_file("Unassigned");
+    constructProperty_model(Model());
 
     constructProperty_initial_time(0);
     constructProperty_final_time(1);
@@ -184,6 +184,7 @@ ParameterValueSet Tool::createParameterValueSet(
 }
 
 void Tool::checkForUnusedInitialGuesses() const {
+    // TODO warning about unreachable code!!!
     for (unsigned int ig = 0; ig < get_initial_guess().getSize(); ++ig) {
         const ParameterValue& initialGuess = get_initial_guess().get(ig);
         for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp)

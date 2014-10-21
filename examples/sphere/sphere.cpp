@@ -1,3 +1,6 @@
+// This example doesn't actually use the model or states. We are just
+// minimizing the scalar function (x - 3)^2.
+
 #include <iostream>
 
 #include <PSim/PSim.h>
@@ -16,11 +19,6 @@ int main()
 {
     PSim::Tool pstool;
 
-    OpenSim::Model model;
-    model.print("empty.osim");
-
-    pstool.set_model_file("empty.osim");
-
     PSim::Parameter x;
     x.setName("x");
     x.set_default_value(5);
@@ -33,7 +31,6 @@ int main()
 
     PSim::ParameterValueSet soln = pstool.run();
     soln.print("pvalset.xml");
-
 
     return 0;
 }

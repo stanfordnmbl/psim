@@ -19,7 +19,7 @@ public:
 
     /// @name Property declarations
     /// @{
-    OpenSim_DECLARE_PROPERTY(model_file, std::string,
+    OpenSim_DECLARE_PROPERTY(model, Model,
             "Path to the base model file (.osim) to optimize.");
     OpenSim_DECLARE_PROPERTY(initial_time, double,
             "The time at which all the simulations start (seconds).");
