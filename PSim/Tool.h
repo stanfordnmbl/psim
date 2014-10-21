@@ -7,6 +7,12 @@
 #include "ParameterValue.h"
 #include "Objective.h"
 
+// TODO even if we use the model file name instead, we should store one copy
+// locally and just keep making copies of that, instead of reading from the
+// file each time (avoid parsing).
+// TODO allow replaying a simulation, not running an optimization,
+// with a given ParameterValueSet. (model and initial state).
+
 // TODO put this line in all header files with properties.
 using namespace OpenSim;
 
@@ -35,6 +41,13 @@ public:
             "the parameter's default value is used. If you supply values "
             "for parameters that are not set to be optimized, those values "
             "are ignored.");
+    OpenSim_DECLARE_PROPERTY(visualize, bool,
+            "Visualize the motion using the simbody-visualizer.");
+    OpenSim_DECLARE_PROPERTY(optimization_convergence_tolerance, double,
+            "Convergence tolerance for the optimizer. The smaller this value, "
+            "the deeper the convergence. "
+            "Decreasing this number can improve a solution, but will also "
+            "likely increase computation time.");
     /// @}
 
     Tool();

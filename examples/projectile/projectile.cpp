@@ -6,120 +6,102 @@
 
 #include <PSim/PSim.h>
 #include <OpenSim/OpenSim.h>
+#include <OpenSim/Simulation/SimbodyEngine/PlanarJoint.h>
 
-class Obj : public PSim::Objective {
-OpenSim_DECLARE_CONCRETE_OBJECT(Obj, PSim::Objective);
-    SimTK::Real evaluate(const PSim::ParameterValueSet& pvalset,
-            const Model& model,
-            const SimTK::State& finalState) const
-    {
-        return pow(pvalset[0].get_value() - 3, 2);
-    }
-};
-
-Model createModel()
-{
-    Model model;
-
-    Body* body = new Body("projectile", 1, SimTK::Vec3(0), SimTK::Inertia(0));
-    model.addBody(body);
-
-    Joint* joint = new FreeJoint("free",
-            model.getGroundBody(), SimTK::Vec3(0), SimTK::Vec3(0),
-            *body, SimTK::Vec3(0), SimTK::Vec3(0));
-
-    model.addJoint(joint);
-
-    // TODO model.addModelComponent(HitGround());
-
-    return model;
-}
-
-int main()
-{
-    PSim::Tool pstool;
-
-    pstool.set_model(createModel());
-
-    PSim::Parameter x;
-    x.setName("x");
-    x.set_default_value(5);
-    pstool.append_parameters(x);
-
-    pstool.append_objectives(Obj());
-
-    pstool.setSerializeAllDefaults(true);
-    pstool.print("testing.xml");
-
-    PSim::ParameterValueSet soln = pstool.run();
-    soln.print("pvalset.xml");
-
-    return 0;
-}
-/**
-
-#include <iostream>
-
-#include <PSim/PSim.h>
-#include <OpenSim/OpenSim.h>
-
-class Obj : public PSim::Objective {
-OpenSim_DECLARE_CONCRETE_OBJECT(Obj, PSim::Objective);
-    SimTK::Real evaluate(const PSim::ParameterValueSet& pvalset,
-            const Model& model,
-            const SimTK::State& finalState) const
-    {
-        return pow(pvalset[0].get_value() - 3, 2);
-    }
-};
-
+// Parameters.
+// ===========
+// Angle of the projectile's initial velocity with the horizontal, in degrees.
 class Angle : public PSim::Parameter {
 OpenSim_DECLARE_CONCRETE_OBJECT(Angle, PSim::Parameter);
-//    virtual void apply(const double param,
-//            Model& model, SimTK::State& initState) const {
-//
-//        const double v = 1;
-//
-//        const double vx = v * cos(param);
-//        const double vy = v * sin(param);
-//
-//        const Coordinate& cx = model.getCoordinateSet().get("free_xTranslation");
-//        cx.setSpeedValue(initState, vx);
-//
-//        const Coordinate& cy = model.getCoordinateSet().get("free_yTranslation");
-//        cy.setSpeedValue(initState, vy);
-//    }
+    virtual void apply(const double param,
+            Model& model, SimTK::State& initState) const {
 
+        const double angle = param * SimTK::Pi / 180.0;
+
+        const double v = 3;
+
+        const double vx = v * cos(angle);
+        const double vy = v * sin(angle);
+
+        const Coordinate& cx = model.getCoordinateSet().get("x");
+        cx.setSpeedValue(initState, vx);
+
+        const Coordinate& cy = model.getCoordinateSet().get("y");
+        cy.setSpeedValue(initState, vy);
+    }
 };
 
+// Objectives.
+// ===========
 class Range : public PSim::Objective {
 OpenSim_DECLARE_CONCRETE_OBJECT(Range, PSim::Objective);
     SimTK::Real evaluate(const PSim::ParameterValueSet& pvalset,
             const Model& model,
             const SimTK::State& finalState) const
     {
-//        const Coordinate& c = model.getCoordinateSet().get("free_xTranslation");
-        return pow(pvalset[0].get_value(), 2);
-//        return -c.getValue(finalState);
+        const Coordinate& c = model.getCoordinateSet().get("x");
+        return -c.getValue(finalState);
     }
 };
 
 // Event handlers.
 // ===============
 namespace OpenSim {
+
 class TriggeredEventHandler : public ModelComponent
 {
 OpenSim_DECLARE_ABSTRACT_OBJECT(TriggeredEventHandler, ModelComponent);
 public:
+    OpenSim_DECLARE_PROPERTY(required_stage, int,
+            "The stage at which the event occurs.");
+
+    TriggeredEventHandler() {
+        constructProperties();
+    }
+
+    virtual void handleEvent(SimTK::State& state, SimTK::Real accuracy,
+            bool& shouldTerminate) const = 0;
+    virtual SimTK::Real getValue(const SimTK::State& s) const = 0;
+
 private:
 
+    void constructProperties() {
+        constructProperty_required_stage(SimTK::Stage::Dynamics);
+    }
+
+    void addToSystem(SimTK::MultibodySystem& system) const override {
+        // TODO is this okay for memory?
+        system.addEventHandler(
+                new SimbodyHandler(SimTK::Stage(get_required_stage()), this));
+    }
+
+    class SimbodyHandler : public SimTK::TriggeredEventHandler {
+    public:
+         SimbodyHandler(SimTK::Stage requiredStage,
+                 const OpenSim::TriggeredEventHandler* handler) :
+             SimTK::TriggeredEventHandler(requiredStage), m_handler(handler) {}
+        void handleEvent(SimTK::State& state, SimTK::Real accuracy,
+                bool& shouldTerminate) const override
+        { m_handler->handleEvent(state, accuracy, shouldTerminate); }
+        SimTK::Real getValue(const SimTK::State& s) const override
+        { return m_handler->getValue(s); }
+    private:
+        const OpenSim::TriggeredEventHandler* m_handler;
+    };
 };
 
+} // namespace OpenSim
+
+// End the simulation when y = 0.
 class HitGround : public TriggeredEventHandler {
+OpenSim_DECLARE_CONCRETE_OBJECT(HitGround, TriggeredEventHandler);
 public:
-    handleEvent(SimTK::State &state, SimTK::Real accuracy,
-            bool &shouldTerminate) const
-    {
+    void handleEvent(SimTK::State& state, SimTK::Real accuracy,
+            bool& shouldTerminate) const override
+    { shouldTerminate = true; }
+    SimTK::Real getValue(const SimTK::State& s) const override {
+        const Coordinate& c = getModel().getCoordinateSet().get("y");
+        return c.getValue(s);
     }
 };
 
@@ -127,43 +109,54 @@ Model createModel()
 {
     Model model;
 
-    Body* body = new Body("projectile", 1, SimTK::Vec3(0), SimTK::Inertia(0));
+    Body* body = new Body("projectile", 1, SimTK::Vec3(0), SimTK::Inertia(1));
     model.addBody(body);
 
-    Joint* joint = new FreeJoint("free",
+    Joint* joint = new PlanarJoint("joint",
             model.getGroundBody(), SimTK::Vec3(0), SimTK::Vec3(0),
             *body, SimTK::Vec3(0), SimTK::Vec3(0));
-
+    joint->getCoordinateSet().get(0).setName("theta");
+    joint->getCoordinateSet().get(1).setName("x");
+    joint->getCoordinateSet().get(2).setName("y");
     model.addJoint(joint);
 
-    // TODO model.addModelComponent(HitGround());
+    model.addModelComponent(new HitGround());
 
     return model;
 }
 
 int main()
 {
+    // Set up tool.
+    // ============
     PSim::Tool pstool;
+    // pstool.set_visualize(true);
+    pstool.set_optimization_convergence_tolerance(1e-10);
 
     pstool.set_model(createModel());
 
-    // Set up the optimization.
-    // ========================
-    PSim::Parameter angle;
+    // Set up parameters.
+    // ==================
+    Angle angle;
     angle.setName("angle");
-    angle.set_default_value(5);
+    angle.set_default_value(80);
+    angle.set_lower_limit(1);
+    angle.set_upper_limit(90);
+    angle.set_lower_opt(0);
+    angle.set_upper_opt(90);
     pstool.append_parameters(angle);
 
-//    pstool.append_objectives(Range());
-    pstool.append_objectives(Obj());
+    // Set up objectives.
+    // ==================
+    pstool.append_objectives(Range());
 
+    // Wrap up.
+    // ========
     pstool.setSerializeAllDefaults(true);
-    pstool.print("testing.xml");
+    pstool.print("PSimToolSetup.xml");
 
     PSim::ParameterValueSet soln = pstool.run();
-    soln.print("pvalset.xml");
-
+    soln.print("solution.xml");
 
     return 0;
 }
-*/

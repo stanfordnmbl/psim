@@ -21,6 +21,10 @@ void Tool::constructProperties() {
 
     ParameterValueSet initial_guess;
     constructProperty_initial_guess(initial_guess);
+
+    constructProperty_visualize(false);
+
+    constructProperty_optimization_convergence_tolerance(1e-4);
 }
 
 unsigned int Tool::numOptimizerParameters() const
@@ -28,9 +32,9 @@ unsigned int Tool::numOptimizerParameters() const
     unsigned int sum = 0;
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
         const Parameter& param = get_parameters(itp);
-            if (param.get_optimize()) {
-                sum += get_parameters(itp).numScalarParameters();
-            }
+        if (param.get_optimize()) {
+            sum += get_parameters(itp).numScalarParameters();
+        }
     }
     return sum;
 }
@@ -144,6 +148,7 @@ ParameterValueSet Tool::run() const
     // Create an Optimizer.
     // ====================
     SimTK::Optimizer opt(optsys);
+    opt.setConvergenceTolerance(get_optimization_convergence_tolerance());
     // TODO don't bother when using CMAES.
     opt.useNumericalGradient(true);
 

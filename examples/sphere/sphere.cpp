@@ -27,10 +27,11 @@ int main()
     pstool.append_objectives(Obj());
 
     pstool.setSerializeAllDefaults(true);
-    pstool.print("testing.xml");
+    pstool.print("PSimToolSetup.xml");
 
     PSim::ParameterValueSet soln = pstool.run();
-    soln.print("pvalset.xml");
+    soln.print("solution.xml");
+
 
     return 0;
 }

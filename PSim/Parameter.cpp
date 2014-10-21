@@ -24,8 +24,8 @@ double Parameter::normalized(double param) const {
 }
 
 double Parameter::unnormalized(double normalizedParam) const {
-    return (normalizedParam + get_lower_opt()) *
-            (get_upper_opt() - get_lower_opt());
+    return normalizedParam * (get_upper_opt() - get_lower_opt()) +
+        get_lower_opt();
 }
 
 } // namespace PSim
