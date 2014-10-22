@@ -53,7 +53,7 @@ public:
     unsigned int numScalarParameters() const { return 1; }
 
     /// This is the core method of this class. Apply the given
-    /// parameter to the Model.
+    /// parameter to the Model and the initial state of the simulation.
     virtual void apply(const double param,
             Model& model, SimTK::State& initState) const {}
 

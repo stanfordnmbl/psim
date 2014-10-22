@@ -7,6 +7,13 @@ namespace PSim {
 
 class Tool;
 
+/**
+ * The system being optimized by the PSim::Tool. Given parameters from the
+ * optimizer, the objective function updates the model and initial state and
+ * runs a simulation. Then, the objective function evaluates the PSim::Tool's
+ * Objective terms, and sends the resulting objective function value back to
+ * the optimizer.
+ */
 class OptimizerSystem : public SimTK::OptimizerSystem
 {
 public:

@@ -12,12 +12,25 @@
 // file each time (avoid parsing).
 // TODO allow replaying a simulation, not running an optimization,
 // with a given ParameterValueSet. (model and initial state).
+// TODO create application.
+// TODO a probe objective, or an integratingobjective. (spring osc. freq).
+// TODO cmaes
+// TODO event handling to opensim-core.
+// TODO register types.
 
 // TODO put this line in all header files with properties.
 using namespace OpenSim;
 
 namespace PSim {
 
+/**
+ * A framework for performing predictive simulations. We optimize a model's
+ * ability to carry out a specific task by varying certain Parameter's of the
+ * model and its initial state, and evaluating the performance of the task via
+ * Objective's. TODO You can define your own Parameter's, and choose how they
+ * affect your model and/or initial state. Then, you define your Objective's
+ * (e.g.  maximum jump height).
+ */
 class Tool : public OpenSim::Object
 {
 OpenSim_DECLARE_CONCRETE_OBJECT(PSim::Tool, Object);
@@ -33,7 +46,7 @@ public:
             "The time at which the simulations end (seconds).");
     OpenSim_DECLARE_LIST_PROPERTY(parameters, Parameter,
             "Optimization parameters.");
-    OpenSim_DECLARE_LIST_PROPERTY(objectives, PSim::Objective,
+    OpenSim_DECLARE_LIST_PROPERTY(objectives, Objective,
             "Terms of the optimization objective function.");
     OpenSim_DECLARE_PROPERTY(initial_guess, ParameterValueSet,
             "Values of parameters used in initial guess in the optimization "
