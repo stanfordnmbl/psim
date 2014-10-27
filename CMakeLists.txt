@@ -23,6 +23,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR
     endif()
 endif()
 
+add_subdirectory(doc)
 add_subdirectory(PSim)
 # TODO add_subdirectory(applications)
 add_subdirectory(examples)

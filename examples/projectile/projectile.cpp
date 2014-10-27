@@ -1,6 +1,5 @@
 // What is the optimal angle at which to shoot off a point mass to get it to
 // go as far as possible? (45 degrees)
-//
 
 #include <iostream>
 
@@ -41,6 +40,10 @@ OpenSim_DECLARE_CONCRETE_OBJECT(Range, PSim::Objective);
     {
         const Coordinate& c = model.getCoordinateSet().get("x");
         return -c.getValue(finalState);
+    }
+
+    void realizePosition(const SimTK::State& state) const override {
+        std::cout << "DEBUG9" << std::endl;
     }
 };
 

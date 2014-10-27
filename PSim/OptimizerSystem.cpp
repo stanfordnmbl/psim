@@ -16,6 +16,7 @@ int OptimizerSystem::objectiveFunc(const SimTK::Vector& parameters,
     // Initialize model and state.
     // ===========================
     Model model = m_pstool.get_model();
+    const auto objectives = m_pstool.addObjectivesToModel(model);
     if (m_pstool.get_visualize()) {
         model.setUseVisualizer(true);
     }
@@ -31,14 +32,14 @@ int OptimizerSystem::objectiveFunc(const SimTK::Vector& parameters,
     // =========
     SimTK::RungeKuttaMersonIntegrator integrator(model.getSystem());
     OpenSim::Manager manager(model, integrator);
+    manager.setWriteToStorage(false);
     manager.setInitialTime(m_pstool.get_initial_time());
     manager.setFinalTime(m_pstool.get_final_time());
     manager.integrate(state);
 
     // Add in objective terms.
     // =======================
-    // TODO IntegratingObjectives that operate like probes?
-    f = m_pstool.evaluateObjectives(pvalset, model, state);
+    f = m_pstool.evaluateObjectives(objectives, pvalset, model, state);
 
     return 0;
 }

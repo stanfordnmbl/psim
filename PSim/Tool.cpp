@@ -205,15 +205,32 @@ void Tool::checkForUnusedInitialGuesses() const {
     }
 }
 
-SimTK::Real Tool::evaluateObjectives(const ParameterValueSet& pvalset,
-        const Model& model,
-        const SimTK::State& finalState) const
+std::vector<const Objective*> Tool::addObjectivesToModel(Model& model) const
 {
-    SimTK::Real f = 0;
+    std::vector<const Objective*> objectives;
     for (unsigned int io = 0; io < getProperty_objectives().size(); ++io) {
         const Objective &obj = get_objectives(io);
         if (obj.get_enabled()) {
-            f += obj.get_weight() * obj.evaluate(pvalset, model, finalState);
+            Objective* clone = obj.clone();
+            // The model now owns this clone.
+            model.addModelComponent(clone);
+            // Append to the return vector.
+            objectives.push_back(clone);
+        }
+    }
+    return objectives;
+}
+
+SimTK::Real Tool::evaluateObjectives(
+        const std::vector<const Objective*>& objectives,
+        const ParameterValueSet& pvalset,
+        const Model& model,
+        const SimTK::State& finalState)
+{
+    SimTK::Real f = 0;
+    for (auto obj : objectives) {
+        if (obj->get_enabled()) {
+            f += obj->get_weight() * obj->evaluate(pvalset, model, finalState);
         }
     }
     return f;

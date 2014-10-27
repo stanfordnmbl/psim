@@ -112,13 +112,24 @@ public:
 
     /// @}
 
+    /// @name Sending parameters to and from the Optimizer.
+    /// @{
+    
+    /// Copies the Objectives into the provided Model. The model then owns
+    /// these objectives.
+    /// @returns A vector of the Objectives thatare in the model.
+    std::vector<const Objective*> addObjectivesToModel(Model& model) const;
+
     /// Builds up the objective function using the <tt>objectives</tt>.
     /// @param[in] pvalset The optimizer parameters.
     /// @param[in] model The pvalset has already been applied to this model.
     /// @param[in] finalState The state at the end of the simulation.
-    SimTK::Real evaluateObjectives(const ParameterValueSet& pvalset,
+    static SimTK::Real evaluateObjectives(
+            const std::vector<const Objective*>& objectives,
+            const ParameterValueSet& pvalset,
             const Model& model,
-            const SimTK::State& finalState) const;
+            const SimTK::State& finalState);
+    /// @}
 
 private:
 

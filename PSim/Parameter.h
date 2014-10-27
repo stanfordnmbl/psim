@@ -9,6 +9,7 @@ using namespace OpenSim;
 namespace PSim {
 
 // TODO template<int N>
+// TODO separate into model parameters and initial state parameters.
 /**
 * A description of how an optimizer parameter affects a Model.
 * The lower_opt property is the value used in the optimizer to represent
