@@ -189,7 +189,6 @@ ParameterValueSet Tool::createParameterValueSet(
 }
 
 void Tool::checkForUnusedInitialGuesses() const {
-    // TODO warning about unreachable code!!!
     for (unsigned int ig = 0; ig < get_initial_guess().getSize(); ++ig) {
         const ParameterValue& initialGuess = get_initial_guess().get(ig);
         for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp)
@@ -199,7 +198,7 @@ void Tool::checkForUnusedInitialGuesses() const {
                 continue;
             }
         }
-        // TODO make this into a warning.
+        // TODO make this into a warning. TODO test this.
         throw OpenSim::Exception("Initial guess '" + initialGuess.getName()
                 + "' does not match any parameter.");
     }
@@ -225,12 +224,12 @@ SimTK::Real Tool::evaluateObjectives(
         const std::vector<const Objective*>& objectives,
         const ParameterValueSet& pvalset,
         const Model& model,
-        const SimTK::State& finalState)
+        const StateTrajectory& states)
 {
     SimTK::Real f = 0;
     for (auto obj : objectives) {
         if (obj->get_enabled()) {
-            f += obj->get_weight() * obj->evaluate(pvalset, model, finalState);
+            f += obj->get_weight() * obj->evaluate(pvalset, model, states);
         }
     }
     return f;

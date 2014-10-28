@@ -5,6 +5,7 @@
 
 #include "Parameter.h"
 #include "ParameterValue.h"
+#include "StateTrajectory.h"
 #include "Objective.h"
 
 // TODO even if we use the model file name instead, we should store one copy
@@ -47,7 +48,8 @@ public:
     OpenSim_DECLARE_LIST_PROPERTY(parameters, Parameter,
             "Optimization parameters.");
     OpenSim_DECLARE_LIST_PROPERTY(objectives, Objective,
-            "Terms of the optimization objective function.");
+            "Terms of the optimization objective function. "
+            "Only enabled objectives are evaluated.");
     OpenSim_DECLARE_PROPERTY(initial_guess, ParameterValueSet,
             "Values of parameters used in initial guess in the optimization "
             "(unnormalized). For parameters that are left out in this object, "
@@ -128,7 +130,7 @@ public:
             const std::vector<const Objective*>& objectives,
             const ParameterValueSet& pvalset,
             const Model& model,
-            const SimTK::State& finalState);
+            const StateTrajectory& states);
     /// @}
 
 private:
