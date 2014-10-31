@@ -17,7 +17,7 @@ int OptimizerSystem::objectiveFunc(const SimTK::Vector& parameters,
 {
     // Initialize model and state.
     // ===========================
-    Model model = m_pstool.get_model();
+    Model model = m_pstool.get_base_model();
     if (m_pstool.get_visualize()) model.setUseVisualizer(true);
 
     // Add Objective's to Model as ModelComponents.

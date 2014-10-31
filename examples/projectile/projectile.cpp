@@ -43,6 +43,7 @@ OpenSim_DECLARE_CONCRETE_OBJECT(Range, PSim::Objective);
     }
 };
 
+// TODO put this in a different example.
 class Test : public PSim::IntegratingObjective {
 OpenSim_DECLARE_CONCRETE_OBJECT(Test, PSim::IntegratingObjective);
     SimTK::Real derivative(const SimTK::State& s) const override {
@@ -78,8 +79,7 @@ public:
     SimTK::Real evaluate(const PSim::ParameterValueSet& pvalset,
             const Model& model,
             const PSim::StateTrajectory& states) const override {
-        std::cout << m_max.maximum(states.back()) << std::endl;
-        return m_max.maximum(states.back());
+        return -m_max.maximum(states.back());
     }
     double height(const SimTK::State& s) const {
         return getModel().getCoordinateSet().get("y").getValue(s);
@@ -189,10 +189,10 @@ int main()
     // Set up tool.
     // ============
     PSim::Tool pstool;
-    pstool.set_visualize(true);
+    //pstool.set_visualize(true);
     pstool.set_optimization_convergence_tolerance(1e-10);
 
-    pstool.set_model(createModel());
+    pstool.set_base_model(createModel());
 
     // Set up parameters.
     // ==================
@@ -207,12 +207,12 @@ int main()
 
     // Set up objectives.
     // ==================
-//    Range range;
-//    range.set_weight(1);
-//    pstool.append_objectives(range);
-//    Test integratingObj;
-//    integratingObj.set_weight(0);
-//    pstool.append_objectives(integratingObj);
+    Range range;
+    range.set_weight(0);
+    pstool.append_objectives(range);
+    Test integratingObj;
+    integratingObj.set_weight(0);
+    pstool.append_objectives(integratingObj);
     MaxHeight maxHeight;
     maxHeight.set_weight(1);
     pstool.append_objectives(maxHeight);

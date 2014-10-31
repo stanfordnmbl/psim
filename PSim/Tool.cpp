@@ -10,7 +10,7 @@ Tool::Tool()
 }
 
 void Tool::constructProperties() {
-    constructProperty_model(Model());
+    constructProperty_base_model(Model());
 
     constructProperty_initial_time(0);
     constructProperty_final_time(1);
