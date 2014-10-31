@@ -66,6 +66,8 @@ public:
             "are ignored.");
     OpenSim_DECLARE_PROPERTY(visualize, bool,
             "During solving, show the motion using the simbody-visualizer.");
+//    OpenSim_DECLARE_PROPERTY(solver, PSimSolver,
+//            "The algorithm that alters parameters to achieve goals.");
     // TODO goes in the solver.
     OpenSim_DECLARE_PROPERTY(optimization_convergence_tolerance, double,
             "Convergence tolerance for the optimizer. The smaller this value, "
@@ -81,7 +83,7 @@ public:
     /// @returns solution to the optimization.
     ParameterValueSet run() const;
 
-    /// @name Sending parameters to and from the Optimizer.
+    /// @name Sending parameters to and from the Solver.
     /// These methods implicitly define how optimizer parameters map to and
     /// from tool parameters.
     /// We make a distinction between "tool" and "optimizer" parameters:
