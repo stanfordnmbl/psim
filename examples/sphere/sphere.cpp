@@ -5,8 +5,8 @@
 
 #include <PSim/PSim.h>
 
-class Obj : public OpenSim::PSimGoal {
-OpenSim_DECLARE_CONCRETE_OBJECT(Obj, OpenSim::Objective);
+class Obj : public PSimGoal {
+OpenSim_DECLARE_CONCRETE_OBJECT(Obj, PSimGoal);
     SimTK::Real evaluate(const OpenSim::PSimParameterValueSet & pvalset,
             const Model& model,
             const OpenSim::StateTrajectory& states) const
@@ -24,7 +24,7 @@ int main()
     x.set_default_value(5);
     pstool.append_parameters(x);
 
-    pstool.append_objectives(Obj());
+    pstool.append_goals(Obj());
 
     pstool.setSerializeAllDefaults(true);
     pstool.print("PSimToolSetup.xml");

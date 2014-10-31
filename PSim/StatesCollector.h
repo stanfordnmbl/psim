@@ -12,9 +12,9 @@ namespace OpenSim {
 * print the states to a Storage file. The states are stored as a
 * StateTrajectory.
 */
-class StatesCollector : public OpenSim::Analysis
+class StatesCollector : public Analysis
 {
-OpenSim_DECLARE_CONCRETE_OBJECT(StatesCollector, OpenSim::Analysis);
+OpenSim_DECLARE_CONCRETE_OBJECT(StatesCollector, Analysis);
 public:
 
     StatesCollector() {}

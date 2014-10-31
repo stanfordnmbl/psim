@@ -21,7 +21,7 @@ int OptimizerSystem::objectiveFunc(const SimTK::Vector& parameters,
     if (m_pstool.get_visualize()) model.setUseVisualizer(true);
 
     // Add PSimGoal's to Model as ModelComponents.
-    const auto objectives = m_pstool.addObjectivesToModel(model);
+    const auto objectives = m_pstool.addGoalsToModel(model);
 
     // Mechanism to record the trajectory of successful states.
     // --------------------------------------------------------
@@ -48,7 +48,7 @@ int OptimizerSystem::objectiveFunc(const SimTK::Vector& parameters,
     // Add in objective terms.
     // =======================
     const StateTrajectory& states = statesCollector->getStateTrajectory();
-    f = m_pstool.evaluateObjectives(objectives, pvalset, model, states);
+    f = m_pstool.evaluateGoals(objectives, pvalset, model, states);
 
     return 0;
 }

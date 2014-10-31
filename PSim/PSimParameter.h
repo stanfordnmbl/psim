@@ -35,15 +35,15 @@ public:
     OpenSim_DECLARE_PROPERTY(optimize, bool,
             "Optimize this parameter (false means default value is used).");
     OpenSim_DECLARE_PROPERTY(lower_limit, double,
-            "Lower limit for the parameter; for optimizer bounds. Default: -Inf");
+            "Lower limit for parameter; for optimizer bounds. Default: -Inf");
     OpenSim_DECLARE_PROPERTY(upper_limit, double,
-            "Upper limit for the parameter; for optimizer bounds. Default: Inf");
+            "Upper limit for parameter; for optimizer bounds. Default: Inf");
     OpenSim_DECLARE_PROPERTY(lower_opt, double,
             "The value of lower_limit used in the optimizer. Default: 0");
     OpenSim_DECLARE_PROPERTY(upper_opt, double,
             "The value of upper_limit used in the optimizer. Default: 1");
     OpenSim_DECLARE_PROPERTY(default_value, double,
-            "Value used if optimize=false; & default initial guess. Default: 0.");
+            "Used if optimize=false; & default initial guess. Default: 0.");
     /// @}
 
     PSimParameter();

@@ -1,5 +1,5 @@
 #include "PSimTool.h"
-#include "OptimizerSystem.h"
+#include "PSimDynamicOptimizationSolver.h"
 
 namespace OpenSim {
 
@@ -10,21 +10,21 @@ PSimTool::PSimTool()
 }
 
 void PSimTool::constructProperties() {
+
     constructProperty_base_model(Model());
+    constructProperty_solver(PSimDynamicOptimizationSolver());
 
     constructProperty_initial_time(0);
     constructProperty_final_time(1);
+    constructProperty_visualize(false);
 
     constructProperty_parameters();
-
-    constructProperty_objectives();
+    constructProperty_goals();
 
     PSimParameterValueSet initial_guess;
     constructProperty_initial_guess(initial_guess);
 
-    constructProperty_visualize(false);
 
-    constructProperty_optimization_convergence_tolerance(1e-4);
 }
 
 unsigned int PSimTool::numOptimizerParameters() const
@@ -133,6 +133,10 @@ void PSimTool::initialOptimizerParameterValuesAndLimits(
 
 PSimParameterValueSet PSimTool::run() const
 {
+    // TODO print the updated model?
+    // TODO print the objective values (at each iteration?)
+    return get_solver().solve(*this);
+    /*
     // Get initial guess, and parameter limits.
     // ========================================
     SimTK::Vector results;
@@ -140,8 +144,8 @@ PSimParameterValueSet PSimTool::run() const
     SimTK::Vector upperLimits;
     initialOptimizerParameterValuesAndLimits(results, lowerLimits, upperLimits);
 
-    // Create an OptimizerSystem.
-    // ==========================
+    // Setup the solver.
+    // =================
     OptimizerSystem optsys(*this);
     optsys.setParameterLimits(lowerLimits, upperLimits);
 
@@ -160,6 +164,7 @@ PSimParameterValueSet PSimTool::run() const
     // Return the solution to the optimization.
     // ========================================
     return createParameterValueSet(results);
+    */
 }
 
 PSimParameterValueSet PSimTool::createParameterValueSet(
@@ -205,27 +210,27 @@ void PSimTool::checkForUnusedInitialGuesses() const {
     }
 }
 
-std::vector<const PSimGoal *> PSimTool::addObjectivesToModel(Model& model) const
+std::vector<const PSimGoal *> PSimTool::addGoalsToModel(Model& model) const
 {
-    std::vector<const PSimGoal *> objectives;
-    for (unsigned int io = 0; io < getProperty_objectives().size(); ++io) {
-        const PSimGoal &obj = get_objectives(io);
-        if (obj.get_enabled()) {
-            PSimGoal * clone = obj.clone();
+    std::vector<const PSimGoal *> goals;
+    for (unsigned int ig = 0; ig < getProperty_goals().size(); ++ig) {
+        const PSimGoal &goal = get_goals(ig);
+        if (goal.get_enabled()) {
+            PSimGoal * clone = goal.clone();
             // The model now owns this clone.
             model.addModelComponent(clone);
             // Append to the return vector.
-            objectives.push_back(clone);
+            goals.push_back(clone);
         }
     }
-    return objectives;
+    return goals;
 }
 
-SimTK::Real PSimTool::evaluateObjectives(
-        const std::vector<const PSimGoal *>& objectives,
-        const PSimParameterValueSet & pvalset,
-        const Model& model,
-        const StateTrajectory& states)
+SimTK::Real PSimTool::evaluateGoals(
+        const std::vector<const PSimGoal *> &objectives,
+        const PSimParameterValueSet &pvalset,
+        const Model &model,
+        const StateTrajectory &states)
 {
     SimTK::Real f = 0;
     for (auto obj : objectives) {

@@ -3,10 +3,11 @@
 
 #include <OpenSim/Common/Object.h>
 
+#include "PSimGoal.h"
 #include "PSimParameter.h"
 #include "PSimParameterValue.h"
+#include "PSimSolver.h"
 #include "StateTrajectory.h"
-#include "PSimGoal.h"
 
 // TODO objective -> goal
 // TODO hierarchy of different types of goals. (terminal, integrating)
@@ -16,6 +17,7 @@
 // TODO clean up the examples.
 // TODO replicate the optimal control example of flight from ACADO.
 // TODO even if we use the model file name instead, we should store one copy
+// TODO split into modelparameters and stateparameters.
 // locally and just keep making copies of that, instead of reading from the
 // file each time (avoid parsing).
 // TODO allow replaying a simulation, not running an optimization,
@@ -25,9 +27,18 @@
 // TODO cmaes
 // TODO event handling to opensim-core.
 // TODO register types.
+// TODO separate into two kinds of parameters (ModelParameters, InitialStateParameters, ControlParameters?).
+// TODO types of problems: optimizing a model, vs the controller contains an optimization.
+// optimizing a model and simulation:
+//  - direct collocation
+//  - CMAES
+//  - Boyd's thing.
+// Parameterization: properties vs control values are substantially different.
+//      Could use a control set controller.
+//      Applying control parameters might mean altering the state.
+// TODO when optimizing a model, how do we apply control parameters, which could be 92 muscles * 100 time steps?
 
 // TODO put this line in all header files with properties.
-using namespace OpenSim;
 
 namespace OpenSim {
 
@@ -39,9 +50,9 @@ namespace OpenSim {
  * affect your model and/or initial state. Then, you define your PSimGoal's
  * (e.g.  maximum jump height).
  */
-class PSimTool : public OpenSim::Object
+class PSimTool : public Object
 {
-OpenSim_DECLARE_CONCRETE_OBJECT(OpenSim::PSimTool, Object);
+OpenSim_DECLARE_CONCRETE_OBJECT(PSimTool, Object);
 public:
 
     /// @name Property declarations
@@ -49,31 +60,25 @@ public:
     // TODO results_dir
     OpenSim_DECLARE_PROPERTY(base_model, Model,
             "Path to the base (unmodified) model file (.osim) to optimize.");
+    OpenSim_DECLARE_PROPERTY(solver, PSimSolver,
+            "The algorithm that alters parameters to achieve goals.");
     OpenSim_DECLARE_PROPERTY(initial_time, double,
             "The time at which all the simulations start (seconds).");
     OpenSim_DECLARE_PROPERTY(final_time, double,
             "The time at which the simulations end (seconds).");
+    OpenSim_DECLARE_PROPERTY(visualize, bool,
+            "During solving, show the motion using the simbody-visualizer.");
     OpenSim_DECLARE_LIST_PROPERTY(parameters, PSimParameter,
             "Optimization parameters.");
-    OpenSim_DECLARE_LIST_PROPERTY(objectives, PSimGoal,
+    OpenSim_DECLARE_LIST_PROPERTY(goals, PSimGoal,
             "Terms of the optimization objective function. "
-            "Only enabled objectives are evaluated.");
+            "Only enabled goals are evaluated.");
     OpenSim_DECLARE_PROPERTY(initial_guess, PSimParameterValueSet,
             "Values of parameters used in initial guess in the optimization "
             "(unnormalized). For parameters that are left out in this object, "
             "the parameter's default value is used. If you supply values "
             "for parameters that are not set to be optimized, those values "
             "are ignored.");
-    OpenSim_DECLARE_PROPERTY(visualize, bool,
-            "During solving, show the motion using the simbody-visualizer.");
-//    OpenSim_DECLARE_PROPERTY(solver, PSimSolver,
-//            "The algorithm that alters parameters to achieve goals.");
-    // TODO goes in the solver.
-    OpenSim_DECLARE_PROPERTY(optimization_convergence_tolerance, double,
-            "Convergence tolerance for the optimizer. The smaller this value, "
-            "the deeper the convergence. "
-            "Decreasing this number can improve a solution, but will also "
-            "likely increase computation time.");
     /// @}
 
     PSimTool();
@@ -105,6 +110,10 @@ public:
     /// @param[in,out] model The model to modify with these parameters.
     void applyParameters(const PSimParameterValueSet & paramValues,
             Model& model, SimTK::State& initState) const;
+    // void applyModelParameters(const PSimParameterValueSet& paramValues,
+    //      Model& model) const;
+    // void applyStateParameters(const PSimParameterValueSet& paramValues,
+    //      SimTK::State& state, bool isInitialState) const;
 
     /// Initial guess to send to the optimizer, with lower and upper limits.
     /// Uses the values from the <tt>initial_guess</tt> property. For
@@ -116,10 +125,9 @@ public:
             SimTK::Vector& lowerLimits,
             SimTK::Vector& upperLimits) const;
 
-    /** Used to organize the parameters from the optimizer.
-     * @param[in] optParamValues Optimizer parameter values.
-     * @returns Unnormalized parameter values.
-     */
+    /// Used to organize the parameters from the optimizer.
+    /// @param[in] optParamValues Optimizer parameter values.
+    /// @returns Unnormalized parameter values.
     PSimParameterValueSet createParameterValueSet(
             const SimTK::Vector& optParamValues) const;
 
@@ -127,20 +135,20 @@ public:
 
     /// @name Sending parameters to and from the Optimizer.
     /// @{
-    
-    /// Copies the Objectives into the provided Model. The model then owns
-    /// these objectives.
-    /// @returns A vector of the Objectives thatare in the model.
-    std::vector<const PSimGoal *> addObjectivesToModel(Model& model) const;
 
-    /// Builds up the objective function using the <tt>objectives</tt>.
+    /// Copies the Objectives into the provided Model. The model then owns
+    /// these goals.
+    /// @returns A vector of the Objectives thatare in the model.
+    std::vector<const PSimGoal *> addGoalsToModel(Model& model) const;
+
+    /// Builds up the objective function using the <tt>goals</tt>.
     /// @param[in] pvalset The optimizer parameters.
     /// @param[in] model The pvalset has already been applied to this model.
     /// @param[in] finalState The state at the end of the simulation.
-    static SimTK::Real evaluateObjectives(
-            const std::vector<const PSimGoal *>& objectives,
-            const PSimParameterValueSet & pvalset,
-            const Model& model,
+    static SimTK::Real evaluateGoals(
+            const std::vector<const PSimGoal *> &goals,
+            const PSimParameterValueSet &pvalset,
+            const Model &model,
             const StateTrajectory& states);
     /// @}
 

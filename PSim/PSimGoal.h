@@ -4,12 +4,13 @@
 #include "PSimParameterValue.h"
 #include "StateTrajectory.h"
 
-#include <OpenSim/Simulation/Model/Model.h>
+#include <OpenSim/Simulation/Model/ModelComponent.h>
 
 namespace OpenSim {
 
 /** A goal that the simulation should achieve, such as maximum distance,
- * minimum energy expenditure, etc.
+ * minimum energy expenditure, etc. The goal is expressed as a scalar
+ * that is added into the objective function for an optimization.
  */
 class PSimGoal : public ModelComponent
 {

@@ -190,7 +190,6 @@ int main()
     // ============
     OpenSim::PSimTool pstool;
     //pstool.set_visualize(true);
-    pstool.set_optimization_convergence_tolerance(1e-10);
 
     pstool.set_base_model(createModel());
 
@@ -208,14 +207,14 @@ int main()
     // Set up objectives.
     // ==================
     Range range;
-    range.set_weight(0);
-    pstool.append_objectives(range);
+    range.set_weight(1);
+    pstool.append_goals(range);
     Test integratingObj;
     integratingObj.set_weight(0);
-    pstool.append_objectives(integratingObj);
+    pstool.append_goals(integratingObj);
     MaxHeight maxHeight;
-    maxHeight.set_weight(1);
-    pstool.append_objectives(maxHeight);
+    maxHeight.set_weight(0);
+    pstool.append_goals(maxHeight);
 
     // Wrap up.
     // ========

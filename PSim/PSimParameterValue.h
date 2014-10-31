@@ -14,14 +14,14 @@ namespace OpenSim {
  * must match the name of a PSimParameter; otherwise, the value might be ignored.
  * TODO help detect unused values.
  */
-class PSimParameterValue : public OpenSim::Object
+class PSimParameterValue : public Object
 {
-OpenSim_DECLARE_CONCRETE_OBJECT(OpenSim::PSimParameterValue, OpenSim::Object);
+OpenSim_DECLARE_CONCRETE_OBJECT(PSimParameterValue, Object);
 public:
 
     /// @name Property declarations
     /// @{
-    OpenSim_DECLARE_PROPERTY(value, double, "Value of the OpenSim::PSimParameter.")
+    OpenSim_DECLARE_PROPERTY(value, double, "Value of the PSimParameter.")
     /// @}
 
     PSimParameterValue()
