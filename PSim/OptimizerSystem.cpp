@@ -26,6 +26,7 @@ int OptimizerSystem::objectiveFunc(const SimTK::Vector& parameters,
     // Mechanism to record the trajectory of successful states.
     // --------------------------------------------------------
     StatesCollector* statesCollector = new StatesCollector();
+    statesCollector->setName("statesCollector");
     model.addAnalysis(statesCollector);
     SimTK::State& state = model.initSystem();
 

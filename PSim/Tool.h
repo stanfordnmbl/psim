@@ -8,6 +8,13 @@
 #include "StateTrajectory.h"
 #include "Objective.h"
 
+// TODO objective -> goal
+// TODO hierarchy of different types of goals.
+// TODO output goals values to file
+// TODO modular solvers.
+// TODO use opensim namespace
+// TODO clean up the examples.
+// TODO replicate the optimal control example of flight from ACADO.
 // TODO even if we use the model file name instead, we should store one copy
 // locally and just keep making copies of that, instead of reading from the
 // file each time (avoid parsing).
@@ -39,8 +46,9 @@ public:
 
     /// @name Property declarations
     /// @{
-    OpenSim_DECLARE_PROPERTY(model, Model,
-            "Path to the base model file (.osim) to optimize.");
+    // TODO results_dir
+    OpenSim_DECLARE_PROPERTY(base_model, Model,
+            "Path to the base (unmodified) model file (.osim) to optimize.");
     OpenSim_DECLARE_PROPERTY(initial_time, double,
             "The time at which all the simulations start (seconds).");
     OpenSim_DECLARE_PROPERTY(final_time, double,
@@ -57,7 +65,8 @@ public:
             "for parameters that are not set to be optimized, those values "
             "are ignored.");
     OpenSim_DECLARE_PROPERTY(visualize, bool,
-            "Visualize the motion using the simbody-visualizer.");
+            "During solving, show the motion using the simbody-visualizer.");
+    // TODO goes in the solver.
     OpenSim_DECLARE_PROPERTY(optimization_convergence_tolerance, double,
             "Convergence tolerance for the optimizer. The smaller this value, "
             "the deeper the convergence. "

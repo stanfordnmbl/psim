@@ -49,43 +49,59 @@ OpenSim_DECLARE_CONCRETE_OBJECT(Test, PSim::IntegratingObjective);
         return 1;
     }
     void realizeReport(const SimTK::State& s) const { 
-        std::cout << "DEBUG report" << std::endl;
+        // TODO std::cout << "DEBUG report" << std::endl;
     }
 };
 
 class MaxHeight : public PSim::Objective {
 OpenSim_DECLARE_CONCRETE_OBJECT(MaxHeight, PSim::Objective);
 public:
-    MaxHeight() {
-        constructInfrastructure();
+
+    class Max : public PSim::Maximum {
+    OpenSim_DECLARE_CONCRETE_OBJECT(Max, PSim::Maximum);
+    public:
+        Max(const MaxHeight* mh) : mh(mh) {}
+        double getInputVirtual(const SimTK::State& s) const override {
+            return mh->height(s);
+        }
+        SimTK::Stage getDependsOnStageVirtual() const override {
+            return SimTK::Stage::Position;
+        }
+    private:
+        const MaxHeight* mh;
+    };
+
+    MaxHeight() : m_max(this) {
+        //constructInfrastructure();
     }
+    MaxHeight(const MaxHeight& mh) : PSim::Objective(mh), m_max(this) {}
     SimTK::Real evaluate(const PSim::ParameterValueSet& pvalset,
             const Model& model,
             const PSim::StateTrajectory& states) const override {
-        m_max.getInput("input");
-        // TODO .connect(getOutput("height"));
+        std::cout << m_max.maximum(states.back()) << std::endl;
         return m_max.maximum(states.back());
     }
     double height(const SimTK::State& s) const {
         return getModel().getCoordinateSet().get("y").getValue(s);
     }
 private:
+    /*
     // TODO should not be necessary.
     void constructProperties() override {}
     void constructOutputs() override {
         constructOutput<double>("height", &MaxHeight::height,
                 SimTK::Stage::Position);
-        getOutput("height");
     }
+    */
+
     void connectToModel(Model& model) override {
         Super::connectToModel(model);
         addComponent(&m_max);
-        std::cout << "DEBUGMAXHEIGHT" << std::endl;
-        //TODOm_max.getInput("input").connect(getOutput("height"));
+        // m_max.getInput("input").connect(getOutput("height"));
     }
-public:
-    PSim::Maximum m_max;
+    Max m_max;
 };
+
 
 // Event handlers.
 // ===============
@@ -173,7 +189,7 @@ int main()
     // Set up tool.
     // ============
     PSim::Tool pstool;
-    // pstool.set_visualize(true);
+    pstool.set_visualize(true);
     pstool.set_optimization_convergence_tolerance(1e-10);
 
     pstool.set_model(createModel());
@@ -191,12 +207,14 @@ int main()
 
     // Set up objectives.
     // ==================
-    pstool.append_objectives(Range());
-    Test integratingObj;
-    integratingObj.set_weight(0);
-    pstool.append_objectives(integratingObj);
+//    Range range;
+//    range.set_weight(1);
+//    pstool.append_objectives(range);
+//    Test integratingObj;
+//    integratingObj.set_weight(0);
+//    pstool.append_objectives(integratingObj);
     MaxHeight maxHeight;
-    maxHeight.set_weight(0);
+    maxHeight.set_weight(1);
     pstool.append_objectives(maxHeight);
 
     // Wrap up.

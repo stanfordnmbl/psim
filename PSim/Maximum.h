@@ -7,11 +7,10 @@ namespace PSim {
 
 class Maximum : public OpenSim::Component
 {
-OpenSim_DECLARE_CONCRETE_OBJECT(Maximum, OpenSim::Component);
+OpenSim_DECLARE_ABSTRACT_OBJECT(Maximum, OpenSim::Component);
 public:
 
     Maximum() {
-        std::cout << "DEBUGMAXCONSTRUCT" << std::endl;
         constructInfrastructure();
     }
 
@@ -19,17 +18,31 @@ public:
         return m_measure.getValue(s);
     }
 
+    double getInput(const SimTK::State& s) const {
+        return getInputVirtual(s);
+    }
+
+    SimTK::Stage getDependsOnStage() const {
+        return getDependsOnStageVirtual();
+    }
+
+protected:
+
+    virtual double getInputVirtual(const SimTK::State& s) const = 0;
+    virtual SimTK::Stage getDependsOnStageVirtual() const = 0;
+
 private:
 
+    /*
     void constructInputs() override {
-        std::cout << "DEBUGMAXINPUT" << std::endl;
-        constructInput<double>("input", SimTK::Stage::Position);
+        constructInput<double>("input", SimTK::Stage::Model);
     }
 
     void constructOutputs() override {
         constructOutput<double>("maximum", &Maximum::maximum,
                 SimTK::Stage::Velocity);
     }
+    */
 
     void addToSystem(SimTK::MultibodySystem& system) const override;
 

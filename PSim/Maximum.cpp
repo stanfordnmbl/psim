@@ -27,7 +27,7 @@ public:
     int getNumTimeDerivativesVirtual() const override { return 0; }
 
     SimTK::Stage getDependsOnStageVirtual(int order) const override
-    {   return SimTK::Stage::Position; }// TODO m_max.getInput("input").getConnectee().getDependsOnStage(); }
+    {   return m_max.getDependsOnStage(); }
 
     void calcCachedValueVirtual(const SimTK::State& s, int derivOrder,
             T& value) const override {
@@ -35,7 +35,7 @@ public:
                 "PSim::InputMeasure<T>::Implementation::"
                 "calcCachedValueVirtual(): "
                 "derivOrder %d seen but only 0 allowed.", derivOrder);
-        // TODO value = m_max.getInputValue<double>(s, "input");
+        value = m_max.getInput(s);
     }
 private:
     const Maximum& m_max;

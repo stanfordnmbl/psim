@@ -147,6 +147,7 @@ ParameterValueSet Tool::run() const
 
     // Create an Optimizer.
     // ====================
+    // TODO plug in a solver.
     SimTK::Optimizer opt(optsys);
     opt.setConvergenceTolerance(get_optimization_convergence_tolerance());
     // TODO don't bother when using CMAES.
