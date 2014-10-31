@@ -1,12 +1,10 @@
-#ifndef PSIM_PARAMETER_H_
-#define PSIM_PARAMETER_H_
+#ifndef OPENSIM_PSIM_PARAMETER_H_
+#define OPENSIM_PSIM_PARAMETER_H_
 
 #include <OpenSim/Common/Object.h>
 #include <OpenSim/Simulation/Model/Model.h>
 
-using namespace OpenSim;
-
-namespace PSim {
+namespace OpenSim {
 
 // TODO template<int N>
 // TODO separate into model parameters and initial state parameters.
@@ -27,9 +25,9 @@ namespace PSim {
 * For a fixed standard deviation (CMAES step size, sigma),
 * a larger difference (upper_opt - lower_opt) causes more exploration.
 */
-class Parameter : public OpenSim::Object
+class PSimParameter : public Object
 {
-OpenSim_DECLARE_CONCRETE_OBJECT(PSim::Parameter, OpenSim::Object);
+OpenSim_DECLARE_CONCRETE_OBJECT(PSimParameter, Object);
 public:
 
     /// @name Property declarations
@@ -48,7 +46,7 @@ public:
             "Value used if optimize=false; & default initial guess. Default: 0.");
     /// @}
 
-    Parameter();
+    PSimParameter();
 
     /// The number of scalar parameters represented by this object.
     unsigned int numScalarParameters() const { return 1; }
@@ -71,6 +69,6 @@ private:
 
 };
 
-} // namespace PSim
+} // namespace OpenSim
 
-#endif // PSIM_PARAMETER_H_
+#endif // OPENSIM_PSIM_PARAMETER_H_

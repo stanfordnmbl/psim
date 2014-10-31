@@ -1,7 +1,7 @@
 
 #include "Maximum.h"
 
-namespace PSim {
+using namespace OpenSim;
 
 // This Measure returns a derivative only at the Acceleration stage.
 // Informed by Probe.
@@ -32,7 +32,7 @@ public:
     void calcCachedValueVirtual(const SimTK::State& s, int derivOrder,
             T& value) const override {
         SimTK_ASSERT1_ALWAYS(derivOrder==0,
-                "PSim::InputMeasure<T>::Implementation::"
+                "OpenSim::InputMeasure<T>::Implementation::"
                 "calcCachedValueVirtual(): "
                 "derivOrder %d seen but only 0 allowed.", derivOrder);
         value = m_max.getInput(s);
@@ -51,5 +51,3 @@ void Maximum::addToSystem(SimTK::MultibodySystem& system) const
         SimTK::Measure::Maximum(system, inputMeasure);
 
 }
-
-} // namespace PSim

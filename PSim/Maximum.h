@@ -1,13 +1,13 @@
-#ifndef PSIM_MAXIMUM_H_
-#define PSIM_MAXIMUM_H_
+#ifndef OPENSIM_MAXIMUM_H_
+#define OPENSIM_MAXIMUM_H_
 
 #include <OpenSim/Common/Component.h>
 
-namespace PSim {
+namespace OpenSim {
 
-class Maximum : public OpenSim::Component
+class Maximum : public Component
 {
-OpenSim_DECLARE_ABSTRACT_OBJECT(Maximum, OpenSim::Component);
+OpenSim_DECLARE_ABSTRACT_OBJECT(Maximum, Component);
 public:
 
     Maximum() {
@@ -50,6 +50,6 @@ private:
 
 };
 
-} // namespace PSim
+} // namespace OpenSim
 
-#endif // PSIM_MAXIMUM_H_
+#endif // OPENSIM_MAXIMUM_H_

@@ -1,14 +1,14 @@
-#ifndef PSIM_CONCRETE_PARAMETERS_H_
-#define PSIM_CONCRETE_PARAMETERS_H_
+#ifndef OPENSIM_PSIM_CONCRETE_PARAMETERS_H_
+#define OPENSIM_PSIM_CONCRETE_PARAMETERS_H_
 
-#include "Parameter.h"
+#include "PSimParameter.h"
 
-namespace PSim {
+namespace OpenSim {
 
-class CoordinateInitialValueParameter : public Parameter
+class CoordinateInitialValueParameter : public PSimParameter
 {
-OpenSim_DECLARE_CONCRETE_OBJECT(PSim::CoordinateInitialValueParameter,
-        Parameter);
+OpenSim_DECLARE_CONCRETE_OBJECT(CoordinateInitialValueParameter,
+        PSimParameter);
 public:
     /// @name Property declarations
     /// @{
@@ -35,10 +35,10 @@ private:
 
 };
 
-class CoordinateInitialSpeedParameter : public Parameter
+class CoordinateInitialSpeedParameter : public PSimParameter
 {
-OpenSim_DECLARE_CONCRETE_OBJECT(PSim::CoordinateInitialSpeedParameter,
-        Parameter);
+OpenSim_DECLARE_CONCRETE_OBJECT(CoordinateInitialSpeedParameter,
+        PSimParameter);
 public:
     /// @name Property declarations
     /// @{
@@ -59,6 +59,6 @@ private:
 
 };
 
-} // namespace PSim
+} // namespace OpenSim
 
-#endif // PSIM_CONCRETE_PARAMETERS_H_
+#endif // OPENSIM_PSIM_CONCRETE_PARAMETERS_H_

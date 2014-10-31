@@ -1,18 +1,19 @@
-#ifndef PSIM_OBJECTIVE_H_
-#define PSIM_OBJECTIVE_H_
+#ifndef OPENSIM_PSIM_GOAL_H_
+#define OPENSIM_PSIM_GOAL_H_
 
-#include "ParameterValue.h"
+#include "PSimParameterValue.h"
 #include "StateTrajectory.h"
 
 #include <OpenSim/Simulation/Model/Model.h>
 
-using namespace OpenSim;
+namespace OpenSim {
 
-namespace PSim {
-
-class Objective : public OpenSim::ModelComponent
+/** A goal that the simulation should achieve, such as maximum distance,
+ * minimum energy expenditure, etc.
+ */
+class PSimGoal : public ModelComponent
 {
-OpenSim_DECLARE_ABSTRACT_OBJECT(PSim::Objective, OpenSim::ModelComponent);
+OpenSim_DECLARE_ABSTRACT_OBJECT(PSimGoal, ModelComponent);
 public:
 
     /// @name Property declarations
@@ -23,12 +24,12 @@ public:
         "Coefficient of this term in the sum across objectives.");
     /// @}
 
-    Objective();
+    PSimGoal();
 
     /// Evaluate this objective. This quantity is multiplied by the weight
-    /// property of this Objective, and is then added to the objective
+    /// property of this PSimGoal, and is then added to the objective
     /// function.
-    virtual SimTK::Real evaluate(const ParameterValueSet& pvalset,
+    virtual SimTK::Real evaluate(const PSimParameterValueSet & pvalset,
             const Model& model,
             const StateTrajectory& states) const = 0;
 
@@ -37,14 +38,14 @@ private:
 
 };
 
-/// An Objective whose value depends on a Probe in the Model.
-/// class ProbeObjective : public Objective
+/// An PSimGoal whose value depends on a Probe in the Model.
+/// class ProbeObjective : public PSimGoal
 /// {
 ///     void constructConnectors() {
 ///         constructConnector<Probe>("probe");
 ///     }
 /// };
 
-} // namespace PSim
+} // namespace OpenSim
 
-#endif // PSIM_PARAMETER_H_
+#endif // OPENSIM_PSIM_GOAL_H_

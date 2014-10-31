@@ -1,7 +1,7 @@
 
-#include "IntegratingObjective.h"
+#include "IntegratingGoal.h"
 
-namespace PSim {
+using namespace OpenSim;
 
 // This Measure returns a derivative only at the Acceleration stage.
 // Informed by Probe.
@@ -9,7 +9,7 @@ template <class T>
 class DerivMeasure : public SimTK::Measure_<T> {
 public:
     SimTK_MEASURE_HANDLE_PREAMBLE(DerivMeasure, SimTK::Measure_<T>);
-    DerivMeasure(SimTK::Subsystem& sub, const IntegratingObjective& obj)
+    DerivMeasure(SimTK::Subsystem& sub, const IntegratingGoal & obj)
         : SimTK::Measure(sub, new Implementation(obj),
                 SimTK::AbstractMeasure::SetHandle()) {}
     SimTK_MEASURE_HANDLE_POSTSCRIPT(DerivMeasure, SimTK::Measure_<T>);
@@ -18,7 +18,7 @@ template <class T>
 class DerivMeasure<T>::Implementation
         : public SimTK::Measure_<T>::Implementation {
 public:
-    Implementation(const IntegratingObjective& obj)
+    Implementation(const IntegratingGoal & obj)
         : SimTK::Measure_<T>::Implementation(1), m_obj(obj) {}
 
     // Implementations of virtual methods.
@@ -36,19 +36,17 @@ public:
         value = m_obj.derivative(s);
     }
 private:
-    const IntegratingObjective& m_obj;
+    const IntegratingGoal & m_obj;
 };
 
-void IntegratingObjective::addToSystem(SimTK::MultibodySystem& system) const
+void IntegratingGoal::addToSystem(SimTK::MultibodySystem& system) const
 {
     Super::addToSystem(system);
 
     DerivMeasure<SimTK::Real> derivMeasure(system, *this);
     SimTK::Measure::Constant initCond(system, 0.0);
 
-    const_cast<IntegratingObjective*>(this)->m_integrateMeasure =
+    const_cast<IntegratingGoal *>(this)->m_integrateMeasure =
         SimTK::Measure::Integrate(system, derivMeasure, initCond);
 
 }
-
-} // namespace PSim

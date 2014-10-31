@@ -1,15 +1,15 @@
-#include "Tool.h"
+#include "PSimTool.h"
 #include "OptimizerSystem.h"
 
-namespace PSim {
+namespace OpenSim {
 
-Tool::Tool()
+PSimTool::PSimTool()
 {
     constructProperties();
     checkForUnusedInitialGuesses();
 }
 
-void Tool::constructProperties() {
+void PSimTool::constructProperties() {
     constructProperty_base_model(Model());
 
     constructProperty_initial_time(0);
@@ -19,7 +19,7 @@ void Tool::constructProperties() {
 
     constructProperty_objectives();
 
-    ParameterValueSet initial_guess;
+    PSimParameterValueSet initial_guess;
     constructProperty_initial_guess(initial_guess);
 
     constructProperty_visualize(false);
@@ -27,11 +27,11 @@ void Tool::constructProperties() {
     constructProperty_optimization_convergence_tolerance(1e-4);
 }
 
-unsigned int Tool::numOptimizerParameters() const
+unsigned int PSimTool::numOptimizerParameters() const
 {
     unsigned int sum = 0;
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
-        const Parameter& param = get_parameters(itp);
+        const PSimParameter & param = get_parameters(itp);
         if (param.get_optimize()) {
             sum += get_parameters(itp).numScalarParameters();
         }
@@ -39,12 +39,12 @@ unsigned int Tool::numOptimizerParameters() const
     return sum;
 }
 
-void Tool::applyParameters(const ParameterValueSet& paramValues,
+void PSimTool::applyParameters(const PSimParameterValueSet & paramValues,
         Model &model, SimTK::State& initState) const
 {
     // Indexes through tool parameters.
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
-        const Parameter& param = get_parameters(itp);
+        const PSimParameter & param = get_parameters(itp);
         // If the parameter is to be optimized.
         if (param.get_optimize()) {
             const double value = paramValues.get(param.getName()).get_value();
@@ -59,8 +59,8 @@ void Tool::applyParameters(const ParameterValueSet& paramValues,
 
     /**
     for (unsigned int ip = 0; ip < paramValues.getSize(); ++ip) {
-        const ParameterValue& pval = paramValues[ip];
-        const Parameter& param = get_parameters().get(pval.getName());
+        const PSimParameterValue& pval = paramValues[ip];
+        const PSimParameter& param = get_parameters().get(pval.getName());
         param.apply(pval.get_value(), model, initState);
         // TODO this neglects to set default values.
     }
@@ -71,7 +71,7 @@ void Tool::applyParameters(const ParameterValueSet& paramValues,
 
     // Indexes through tool parameters.
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
-        const Parameter& param = get_parameters(itp);
+        const PSimParameter& param = get_parameters(itp);
         // If the parameter is to be optimized.
         if (param.get_optimize()) {
             param.apply(param.unnormalized(optParamValues[iop]),
@@ -87,7 +87,7 @@ void Tool::applyParameters(const ParameterValueSet& paramValues,
     */
 }
 
-void Tool::initialOptimizerParameterValuesAndLimits(
+void PSimTool::initialOptimizerParameterValuesAndLimits(
         SimTK::Vector& initOptParams,
         SimTK::Vector& lowerLimits,
         SimTK::Vector& upperLimits) const
@@ -101,7 +101,7 @@ void Tool::initialOptimizerParameterValuesAndLimits(
 
     // Indexes through tool parameters.
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
-        const Parameter& param = get_parameters(itp);
+        const PSimParameter & param = get_parameters(itp);
         // If the parameter is to be optimized.
         if (param.get_optimize()) {
             // Ignore values in initial_guess for parameters that are not
@@ -111,7 +111,7 @@ void Tool::initialOptimizerParameterValuesAndLimits(
 
             // The user supplied an initial guess.
             if (get_initial_guess().contains(param.getName())) {
-                const ParameterValue& pval =
+                const PSimParameterValue & pval =
                         get_initial_guess().get(param.getName());
                 unnormalized = pval.get_value();
             }
@@ -131,7 +131,7 @@ void Tool::initialOptimizerParameterValuesAndLimits(
     }
 }
 
-ParameterValueSet Tool::run() const
+PSimParameterValueSet PSimTool::run() const
 {
     // Get initial guess, and parameter limits.
     // ========================================
@@ -162,10 +162,10 @@ ParameterValueSet Tool::run() const
     return createParameterValueSet(results);
 }
 
-ParameterValueSet Tool::createParameterValueSet(
+PSimParameterValueSet PSimTool::createParameterValueSet(
         const SimTK::Vector &optParamValues) const
 {
-    ParameterValueSet pvalset;
+    PSimParameterValueSet pvalset;
 
     // Indexes through optimizer parameters.
     unsigned int iop = 0;
@@ -173,11 +173,11 @@ ParameterValueSet Tool::createParameterValueSet(
     // Indexes through tool parameters.
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
 
-        const Parameter& param = get_parameters(itp);
+        const PSimParameter & param = get_parameters(itp);
 
         // If the parameter was optimized.
         if (param.get_optimize()) {
-            ParameterValue* pval = new ParameterValue();
+            PSimParameterValue * pval = new PSimParameterValue();
             pval->setName(param.getName());
             // TODO get subvector.
             pval->set_value(param.unnormalized(optParamValues(iop)));
@@ -189,12 +189,12 @@ ParameterValueSet Tool::createParameterValueSet(
     return pvalset;
 }
 
-void Tool::checkForUnusedInitialGuesses() const {
+void PSimTool::checkForUnusedInitialGuesses() const {
     for (unsigned int ig = 0; ig < get_initial_guess().getSize(); ++ig) {
-        const ParameterValue& initialGuess = get_initial_guess().get(ig);
+        const PSimParameterValue & initialGuess = get_initial_guess().get(ig);
         for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp)
         {
-            const Parameter& param = get_parameters(itp);
+            const PSimParameter & param = get_parameters(itp);
             if (initialGuess.getName() == param.getName()) {
                 continue;
             }
@@ -205,13 +205,13 @@ void Tool::checkForUnusedInitialGuesses() const {
     }
 }
 
-std::vector<const Objective*> Tool::addObjectivesToModel(Model& model) const
+std::vector<const PSimGoal *> PSimTool::addObjectivesToModel(Model& model) const
 {
-    std::vector<const Objective*> objectives;
+    std::vector<const PSimGoal *> objectives;
     for (unsigned int io = 0; io < getProperty_objectives().size(); ++io) {
-        const Objective &obj = get_objectives(io);
+        const PSimGoal &obj = get_objectives(io);
         if (obj.get_enabled()) {
-            Objective* clone = obj.clone();
+            PSimGoal * clone = obj.clone();
             // The model now owns this clone.
             model.addModelComponent(clone);
             // Append to the return vector.
@@ -221,9 +221,9 @@ std::vector<const Objective*> Tool::addObjectivesToModel(Model& model) const
     return objectives;
 }
 
-SimTK::Real Tool::evaluateObjectives(
-        const std::vector<const Objective*>& objectives,
-        const ParameterValueSet& pvalset,
+SimTK::Real PSimTool::evaluateObjectives(
+        const std::vector<const PSimGoal *>& objectives,
+        const PSimParameterValueSet & pvalset,
         const Model& model,
         const StateTrajectory& states)
 {
@@ -236,5 +236,5 @@ SimTK::Real Tool::evaluateObjectives(
     return f;
 }
 
-} // namespace PSim
+} // namespace OpenSim
 

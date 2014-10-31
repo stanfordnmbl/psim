@@ -5,11 +5,11 @@
 
 #include <PSim/PSim.h>
 
-class Obj : public PSim::Objective {
-OpenSim_DECLARE_CONCRETE_OBJECT(Obj, PSim::Objective);
-    SimTK::Real evaluate(const PSim::ParameterValueSet& pvalset,
+class Obj : public OpenSim::PSimGoal {
+OpenSim_DECLARE_CONCRETE_OBJECT(Obj, OpenSim::Objective);
+    SimTK::Real evaluate(const OpenSim::PSimParameterValueSet & pvalset,
             const Model& model,
-            const PSim::StateTrajectory& states) const
+            const OpenSim::StateTrajectory& states) const
     {
         return pow(pvalset[0].get_value() - 3, 2);
     }
@@ -17,9 +17,9 @@ OpenSim_DECLARE_CONCRETE_OBJECT(Obj, PSim::Objective);
 
 int main()
 {
-    PSim::Tool pstool;
+    OpenSim::PSimTool pstool;
 
-    PSim::Parameter x;
+    OpenSim::PSimParameter x;
     x.setName("x");
     x.set_default_value(5);
     pstool.append_parameters(x);
@@ -29,7 +29,7 @@ int main()
     pstool.setSerializeAllDefaults(true);
     pstool.print("PSimToolSetup.xml");
 
-    PSim::ParameterValueSet soln = pstool.run();
+    OpenSim::PSimParameterValueSet soln = pstool.run();
     soln.print("solution.xml");
 
 

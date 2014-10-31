@@ -1,15 +1,15 @@
-#ifndef PSIM_TOOL_H_
-#define PSIM_TOOL_H_
+#ifndef OPENSIM_PSIM_TOOL_H_
+#define OPENSIM_PSIM_TOOL_H_
 
 #include <OpenSim/Common/Object.h>
 
-#include "Parameter.h"
-#include "ParameterValue.h"
+#include "PSimParameter.h"
+#include "PSimParameterValue.h"
 #include "StateTrajectory.h"
-#include "Objective.h"
+#include "PSimGoal.h"
 
 // TODO objective -> goal
-// TODO hierarchy of different types of goals.
+// TODO hierarchy of different types of goals. (terminal, integrating)
 // TODO output goals values to file
 // TODO modular solvers.
 // TODO use opensim namespace
@@ -19,7 +19,7 @@
 // locally and just keep making copies of that, instead of reading from the
 // file each time (avoid parsing).
 // TODO allow replaying a simulation, not running an optimization,
-// with a given ParameterValueSet. (model and initial state).
+// with a given PSimParameterValueSet. (model and initial state).
 // TODO create application.
 // TODO a probe objective, or an integratingobjective. (spring osc. freq).
 // TODO cmaes
@@ -29,19 +29,19 @@
 // TODO put this line in all header files with properties.
 using namespace OpenSim;
 
-namespace PSim {
+namespace OpenSim {
 
 /**
  * A framework for performing predictive simulations. We optimize a model's
- * ability to carry out a specific task by varying certain Parameter's of the
+ * ability to carry out a specific task by varying certain PSimParameter's of the
  * model and its initial state, and evaluating the performance of the task via
- * Objective's. TODO You can define your own Parameter's, and choose how they
- * affect your model and/or initial state. Then, you define your Objective's
+ * PSimGoal's. TODO You can define your own PSimParameter's, and choose how they
+ * affect your model and/or initial state. Then, you define your PSimGoal's
  * (e.g.  maximum jump height).
  */
-class Tool : public OpenSim::Object
+class PSimTool : public OpenSim::Object
 {
-OpenSim_DECLARE_CONCRETE_OBJECT(PSim::Tool, Object);
+OpenSim_DECLARE_CONCRETE_OBJECT(OpenSim::PSimTool, Object);
 public:
 
     /// @name Property declarations
@@ -53,12 +53,12 @@ public:
             "The time at which all the simulations start (seconds).");
     OpenSim_DECLARE_PROPERTY(final_time, double,
             "The time at which the simulations end (seconds).");
-    OpenSim_DECLARE_LIST_PROPERTY(parameters, Parameter,
+    OpenSim_DECLARE_LIST_PROPERTY(parameters, PSimParameter,
             "Optimization parameters.");
-    OpenSim_DECLARE_LIST_PROPERTY(objectives, Objective,
+    OpenSim_DECLARE_LIST_PROPERTY(objectives, PSimGoal,
             "Terms of the optimization objective function. "
             "Only enabled objectives are evaluated.");
-    OpenSim_DECLARE_PROPERTY(initial_guess, ParameterValueSet,
+    OpenSim_DECLARE_PROPERTY(initial_guess, PSimParameterValueSet,
             "Values of parameters used in initial guess in the optimization "
             "(unnormalized). For parameters that are left out in this object, "
             "the parameter's default value is used. If you supply values "
@@ -76,12 +76,12 @@ public:
             "likely increase computation time.");
     /// @}
 
-    Tool();
+    PSimTool();
 
     // TODO print out the new model? that's what is optimized...
     /// Perform the predictive simulation optimization.
     /// @returns solution to the optimization.
-    ParameterValueSet run() const;
+    PSimParameterValueSet run() const;
 
     /// @name Sending parameters to and from the Solver.
     /// These methods implicitly define how optimizer parameters map to and
@@ -94,7 +94,7 @@ public:
     // These methods handle the mapping between tool and optimizer parameters.
     /// @{
 
-    /// The sum of the number of scalar parameters across the PSim::Parameter's
+    /// The sum of the number of scalar parameters across the OpenSim::PSimParameter's
     /// that are set to be optimized.
     unsigned int numOptimizerParameters() const;
 
@@ -103,14 +103,14 @@ public:
     /// @param[in] paramValues this is what the optimizer gives to the
     ///     OptimizerSystem.
     /// @param[in,out] model The model to modify with these parameters.
-    void applyParameters(const ParameterValueSet& paramValues,
+    void applyParameters(const PSimParameterValueSet & paramValues,
             Model& model, SimTK::State& initState) const;
 
     /// Initial guess to send to the optimizer, with lower and upper limits.
     /// Uses the values from the <tt>initial_guess</tt> property. For
     /// parameters left out of <tt>initial_guess</tt>, we use the parameter's
     /// default value. The length of the returned Vectors depends
-    /// on the number of PSim::Parameter's set to optimize.
+    /// on the number of OpenSim::PSimParameter's set to optimize.
     void initialOptimizerParameterValuesAndLimits(
             SimTK::Vector& initOptParams,
             SimTK::Vector& lowerLimits,
@@ -120,7 +120,7 @@ public:
      * @param[in] optParamValues Optimizer parameter values.
      * @returns Unnormalized parameter values.
      */
-    ParameterValueSet createParameterValueSet(
+    PSimParameterValueSet createParameterValueSet(
             const SimTK::Vector& optParamValues) const;
 
     /// @}
@@ -131,15 +131,15 @@ public:
     /// Copies the Objectives into the provided Model. The model then owns
     /// these objectives.
     /// @returns A vector of the Objectives thatare in the model.
-    std::vector<const Objective*> addObjectivesToModel(Model& model) const;
+    std::vector<const PSimGoal *> addObjectivesToModel(Model& model) const;
 
     /// Builds up the objective function using the <tt>objectives</tt>.
     /// @param[in] pvalset The optimizer parameters.
     /// @param[in] model The pvalset has already been applied to this model.
     /// @param[in] finalState The state at the end of the simulation.
     static SimTK::Real evaluateObjectives(
-            const std::vector<const Objective*>& objectives,
-            const ParameterValueSet& pvalset,
+            const std::vector<const PSimGoal *>& objectives,
+            const PSimParameterValueSet & pvalset,
             const Model& model,
             const StateTrajectory& states);
     /// @}
@@ -152,6 +152,6 @@ private:
 
 };
 
-} // namespace PSim
+} // namespace OpenSim
 
-#endif // PSIM_TOOL_H_
+#endif // OPENSIM_PSIM_TOOL_H_

@@ -10,8 +10,8 @@
 // Parameters.
 // ===========
 // Angle of the projectile's initial velocity with the horizontal, in degrees.
-class Angle : public PSim::Parameter {
-OpenSim_DECLARE_CONCRETE_OBJECT(Angle, PSim::Parameter);
+class Angle : public OpenSim::PSimParameter {
+OpenSim_DECLARE_CONCRETE_OBJECT(Angle, OpenSim::PSimParameter);
     virtual void apply(const double param,
             Model& model, SimTK::State& initState) const {
 
@@ -32,11 +32,11 @@ OpenSim_DECLARE_CONCRETE_OBJECT(Angle, PSim::Parameter);
 
 // Objectives.
 // ===========
-class Range : public PSim::Objective {
-OpenSim_DECLARE_CONCRETE_OBJECT(Range, PSim::Objective);
-    SimTK::Real evaluate(const PSim::ParameterValueSet& pvalset,
+class Range : public OpenSim::PSimGoal {
+OpenSim_DECLARE_CONCRETE_OBJECT(Range, OpenSim::PSimGoal);
+    SimTK::Real evaluate(const OpenSim::PSimParameterValueSet & pvalset,
             const Model& model,
-            const PSim::StateTrajectory& states) const override
+            const OpenSim::StateTrajectory& states) const override
     {
         const Coordinate& c = model.getCoordinateSet().get("x");
         return -c.getValue(states.back());
@@ -44,8 +44,8 @@ OpenSim_DECLARE_CONCRETE_OBJECT(Range, PSim::Objective);
 };
 
 // TODO put this in a different example.
-class Test : public PSim::IntegratingObjective {
-OpenSim_DECLARE_CONCRETE_OBJECT(Test, PSim::IntegratingObjective);
+class Test : public OpenSim::IntegratingGoal {
+OpenSim_DECLARE_CONCRETE_OBJECT(Test, OpenSim::IntegratingGoal);
     SimTK::Real derivative(const SimTK::State& s) const override {
         return 1;
     }
@@ -54,12 +54,12 @@ OpenSim_DECLARE_CONCRETE_OBJECT(Test, PSim::IntegratingObjective);
     }
 };
 
-class MaxHeight : public PSim::Objective {
-OpenSim_DECLARE_CONCRETE_OBJECT(MaxHeight, PSim::Objective);
+class MaxHeight : public OpenSim::PSimGoal {
+OpenSim_DECLARE_CONCRETE_OBJECT(MaxHeight, OpenSim::PSimGoal);
 public:
 
-    class Max : public PSim::Maximum {
-    OpenSim_DECLARE_CONCRETE_OBJECT(Max, PSim::Maximum);
+    class Max : public OpenSim::Maximum {
+    OpenSim_DECLARE_CONCRETE_OBJECT(Max, OpenSim::Maximum);
     public:
         Max(const MaxHeight* mh) : mh(mh) {}
         double getInputVirtual(const SimTK::State& s) const override {
@@ -75,10 +75,10 @@ public:
     MaxHeight() : m_max(this) {
         //constructInfrastructure();
     }
-    MaxHeight(const MaxHeight& mh) : PSim::Objective(mh), m_max(this) {}
-    SimTK::Real evaluate(const PSim::ParameterValueSet& pvalset,
+    MaxHeight(const MaxHeight& mh) : OpenSim::PSimGoal(mh), m_max(this) {}
+    SimTK::Real evaluate(const OpenSim::PSimParameterValueSet & pvalset,
             const Model& model,
-            const PSim::StateTrajectory& states) const override {
+            const OpenSim::StateTrajectory& states) const override {
         return -m_max.maximum(states.back());
     }
     double height(const SimTK::State& s) const {
@@ -188,7 +188,7 @@ int main()
 {
     // Set up tool.
     // ============
-    PSim::Tool pstool;
+    OpenSim::PSimTool pstool;
     //pstool.set_visualize(true);
     pstool.set_optimization_convergence_tolerance(1e-10);
 
@@ -222,7 +222,7 @@ int main()
     pstool.setSerializeAllDefaults(true);
     pstool.print("PSimToolSetup.xml");
 
-    PSim::ParameterValueSet soln = pstool.run();
+    OpenSim::PSimParameterValueSet soln = pstool.run();
     soln.print("solution.xml");
 
     return 0;

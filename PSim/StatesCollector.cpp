@@ -3,13 +3,10 @@
 
 #include <OpenSim/Simulation/Model/Model.h>
 
-namespace PSim {
+namespace OpenSim {
 
 int StatesCollector::end(SimTK::State& s)
 {
-    // We already have the last state in the trajectory, so we do not need
-    // to append it to the trajectory. But, for these states to be useful,
-    // we realize them.
     // TODO should only realize to Dynamics? Or allow components to use their
     // realizeReport?
     const SimTK::MultibodySystem& mbs = _model->getMultibodySystem();
@@ -19,4 +16,4 @@ int StatesCollector::end(SimTK::State& s)
     return 0;
 }
 
-} // namespace PSim
+} // namespace OpenSim

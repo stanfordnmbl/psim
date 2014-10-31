@@ -1,19 +1,17 @@
-#ifndef PSIM_INTEGRATING_OBJECTIVE_H_
-#define PSIM_INTEGRATING_OBJECTIVE_H_
+#ifndef OPENSIM_PSIM_INTEGRATING_OBJECTIVE_H_
+#define OPENSIM_PSIM_INTEGRATING_OBJECTIVE_H_
 
-#include "Objective.h"
+#include "PSimGoal.h"
 #include "StateTrajectory.h"
 #include <OpenSim/Simulation/Model/Model.h>
 
-using namespace OpenSim;
-
-namespace PSim {
+namespace OpenSim {
 
 /// This objective value is obtained by integrating a quantity over the
 /// duration of the simulation.
-class IntegratingObjective : public Objective
+class IntegratingGoal : public PSimGoal
 {
-OpenSim_DECLARE_ABSTRACT_OBJECT(PSim::IntegratingObjective, Objective);
+OpenSim_DECLARE_ABSTRACT_OBJECT(IntegratingGoal, PSimGoal);
 public:
 
     /// @name Property declarations
@@ -22,11 +20,11 @@ public:
         "Initial condition for integration.");
     /// @}
     
-    IntegratingObjective() {
+    IntegratingGoal() {
         constructProperties();
     }
 
-    SimTK::Real evaluate(const ParameterValueSet& pvalset,
+    SimTK::Real evaluate(const PSimParameterValueSet & pvalset,
             const Model& model,
             const StateTrajectory& states) const override final
     {
@@ -48,6 +46,6 @@ private:
  
 };
 
-} // namespace PSim
+} // namespace OpenSim
 
-#endif // PSIM_INTEGRATING_OBJECTIVE_H_
+#endif // OPENSIM_PSIM_INTEGRATING_OBJECTIVE_H_

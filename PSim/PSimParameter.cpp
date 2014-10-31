@@ -1,14 +1,14 @@
-#include "Parameter.h"
+#include "PSimParameter.h"
 
 #include <OpenSim/Common/Array.h>
 
-namespace PSim {
+using namespace OpenSim;
 
-Parameter::Parameter() {
+PSimParameter::PSimParameter() {
     constructProperties();
 }
 
-void Parameter::constructProperties() {
+void PSimParameter::constructProperties() {
     constructProperty_optimize(true);
 
     constructProperty_lower_limit(-SimTK::Infinity);
@@ -19,13 +19,11 @@ void Parameter::constructProperties() {
     constructProperty_default_value(0);
 }
 
-double Parameter::normalized(double param) const {
+double PSimParameter::normalized(double param) const {
     return (param - get_lower_opt()) / (get_upper_opt() - get_lower_opt());
 }
 
-double Parameter::unnormalized(double normalizedParam) const {
+double PSimParameter::unnormalized(double normalizedParam) const {
     return normalizedParam * (get_upper_opt() - get_lower_opt()) +
         get_lower_opt();
 }
-
-} // namespace PSim

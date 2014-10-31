@@ -1,15 +1,15 @@
-#ifndef PSIM_PSIM_H_
-#define PSIM_PSIM_H_
+#ifndef OPENSIM_PSIM_H_
+#define OPENSIM_PSIM_H_
 
 #include "ConcreteParameters.h"
-#include "IntegratingObjective.h"
+#include "IntegratingGoal.h"
 #include "Maximum.h"
-#include "Objective.h"
+#include "PSimGoal.h"
 #include "OptimizerSystem.h"
-#include "Parameter.h"
-#include "ParameterValue.h"
+#include "PSimParameter.h"
+#include "PSimParameterValue.h"
 #include "StatesCollector.h"
 #include "StateTrajectory.h"
-#include "Tool.h"
+#include "PSimTool.h"
 
-#endif // PSIM_PSIM_H_
+#endif // OPENSIM_PSIM_H_

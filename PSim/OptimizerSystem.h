@@ -1,30 +1,30 @@
-#ifndef PSIM_OPTIMIZER_SYSTEM_H_
-#define PSIM_OPTIMIZER_SYSTEM_H_
+#ifndef OPENSIM_PSIM_OPTIMIZER_SYSTEM_H_
+#define OPENSIM_PSIM_OPTIMIZER_SYSTEM_H_
 
 #include <Simbody.h>
 
-namespace PSim {
+namespace OpenSim {
 
-class Tool;
+class PSimTool;
 
 /**
- * The system being optimized by the PSim::Tool. Given parameters from the
+ * The system being optimized by the OpenSim::PSimTool. Given parameters from the
  * optimizer, the objective function updates the model and initial state and
- * runs a simulation. Then, the objective function evaluates the PSim::Tool's
- * Objective terms, and sends the resulting objective function value back to
+ * runs a simulation. Then, the objective function evaluates the OpenSim::PSimTool's
+ * PSimGoal terms, and sends the resulting objective function value back to
  * the optimizer.
  */
 class OptimizerSystem : public SimTK::OptimizerSystem
 {
 public:
-    OptimizerSystem(const Tool& tool);
+    OptimizerSystem(const PSimTool & tool);
     int objectiveFunc(const SimTK::Vector& parameters, bool new_parameters,
             SimTK::Real& f) const override;
 
 private:
-    const Tool& m_pstool;
+    const PSimTool & m_pstool;
 };
 
-} // namespace PSim
+} // namespace OpenSim
 
-#endif // PSIM_OPTIMIZER_SYSTEM_H_
+#endif // OPENSIM_PSIM_OPTIMIZER_SYSTEM_H_

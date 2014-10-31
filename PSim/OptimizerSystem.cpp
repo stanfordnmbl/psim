@@ -1,13 +1,13 @@
 #include "OptimizerSystem.h"
 #include "StatesCollector.h"
 #include "StateTrajectory.h"
-#include "Tool.h"
+#include "PSimTool.h"
 
 #include <OpenSim/Simulation/Manager/Manager.h>
 
-namespace PSim {
+using namespace OpenSim;
 
-OptimizerSystem::OptimizerSystem(const Tool& tool)
+OptimizerSystem::OptimizerSystem(const PSimTool & tool)
         : SimTK::OptimizerSystem(tool.numOptimizerParameters()), m_pstool(tool)
 {
 }
@@ -20,7 +20,7 @@ int OptimizerSystem::objectiveFunc(const SimTK::Vector& parameters,
     Model model = m_pstool.get_base_model();
     if (m_pstool.get_visualize()) model.setUseVisualizer(true);
 
-    // Add Objective's to Model as ModelComponents.
+    // Add PSimGoal's to Model as ModelComponents.
     const auto objectives = m_pstool.addObjectivesToModel(model);
 
     // Mechanism to record the trajectory of successful states.
@@ -32,7 +32,7 @@ int OptimizerSystem::objectiveFunc(const SimTK::Vector& parameters,
 
     // Update model and initial state with parameters.
     // ===============================================
-    const ParameterValueSet pvalset(
+    const PSimParameterValueSet pvalset(
             m_pstool.createParameterValueSet(parameters));
     m_pstool.applyParameters(pvalset, model, state);
 
@@ -52,5 +52,3 @@ int OptimizerSystem::objectiveFunc(const SimTK::Vector& parameters,
 
     return 0;
 }
-
-} // namespace PSim
