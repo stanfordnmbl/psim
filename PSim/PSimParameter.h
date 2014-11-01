@@ -7,9 +7,9 @@
 namespace OpenSim {
 
 // TODO template<int N>
-// TODO separate into model parameters and initial state parameters.
 /**
-* A description of how an optimizer parameter affects a Model.
+* A description of how an optimizer parameter affects a Model and its
+* SimTK::State.
 * The lower_opt property is the value used in the optimizer to represent
 * the lower_limit value. Likewise for upper_opt. These properties
 * are used for normalizing the parameter values so that the optimizer
@@ -51,14 +51,28 @@ public:
     /// The number of scalar parameters represented by this object.
     unsigned int numScalarParameters() const { return 1; }
 
-    /// This is the core method of this class. Apply the given
-    /// parameter to the Model and the initial state of the simulation.
-    virtual void applyToModel(const double param,
-            Model& model) const {}
-    virtual void applyToInitialState(const double param,
-            const Model& model, SimTK::State& initState) const {}
-    virtual void applyToStateCache(const double param,
-            const Model& model, const SimTK::State& s) const {}
+    /// @name Applying parameter values to a model or state.
+    /// These are the core methods of this class.
+    /// The way in which these methods are used by the PSimSolver depends on
+    /// the solver. Most parameters only apply to one of the three categories
+    /// represented by these three methods.
+    /// @{
+
+    /// Apply the parameter value to the given writeable model.
+    void applyToModel(const double param,
+            Model& model) const
+    { return extendApplyToModel(param, model); }
+
+    /// Apply the parameter value to the given writeable initial state.
+    void applyToInitialState(const double param,
+            const Model& model, SimTK::State& initState) const
+    { return extendApplyToInitialState(param, model, initState); }
+
+    /// Apply the parameter value to the given state's cache (e.g, controls).
+    void applyToStateCache(const double param,
+            const Model& model, const SimTK::State& s) const
+    { return extendApplyToStateCache(param, model, s); }
+    /// @}
 
     /// This is used to compute a value that can be sent to
     /// to the optimizer (e.g., for initial parameters).
@@ -69,6 +83,18 @@ public:
     double unnormalized(double normalizedParam) const;
 
 private:
+
+    /// @name Parameter developer interface.
+    /// Implementors of new Parameters must override these methods.
+    /// @{
+    virtual void extendApplyToModel(const double param,
+            Model& model) const {}
+    virtual void extendApplyToInitialState(const double param,
+            const Model& model, SimTK::State& initState) const {}
+    virtual void extendApplyToStateCache(const double param,
+            const Model& model, const SimTK::State& s) const {}
+    /// @}
+     
     void constructProperties();
 
 };

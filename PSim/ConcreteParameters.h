@@ -20,7 +20,7 @@ public:
 
     PSimCoordInitialValueParameter() { constructProperties(); }
 
-    void applyToInitialState(const double param,
+    void extendApplyToInitialState(const double param,
             const Model& model, SimTK::State& initState) const override {
         model.getCoordinateSet().get(get_coordinate_name()).
                 setValue(initState, param);
@@ -45,7 +45,7 @@ public:
 
     PSimCoordInitialSpeedParameter() { constructProperties(); }
 
-    void applyToInitialState(const double param,
+    void extendApplyToInitialState(const double param,
             const Model& model, SimTK::State& initState) const override {
         model.getCoordinateSet().get(get_coordinate_name()).
             setSpeedValue(initState, param);

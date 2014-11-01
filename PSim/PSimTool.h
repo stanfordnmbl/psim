@@ -95,7 +95,8 @@ public:
     /// can be set to not be optimized and are not normalized.
     /// Optimizer parameters are normalized and don't contain tool
     /// parameters that are not being optimized.
-    /// These methods handle the mapping between tool and optimizer parameters.
+    /// These methods handle the mapping between tool and optimizer
+    /// parameters, and are to be called by the PSimSolver.
     /// @{
 
     /// The sum of the number of scalar parameters across the
@@ -103,16 +104,28 @@ public:
     unsigned int numOptimizerParameters() const;
 
     /// Modify the model according to the given parameters. For parameters
-    /// that are not being optimized, use the default value of the parameter.
-    /// @param[in] paramValues this is what the optimizer gives to the
-    ///     OptimizerSystem.
+    /// that are not being optimized, the default value of the parameter is
+    /// applied.
+    /// @param[in] paramValues This comes from the optimizer.
     /// @param[in,out] model The model to modify with these parameters.
-    // void applyParameters(const PSimParameterValueSet & paramValues,
-    //         Model& model, SimTK::State& initState) const;
     void applyParametersToModel(const PSimParameterValueSet& paramValues,
          Model& model) const;
+
+    /// Modify the initial state according to the given parameters. This should
+    /// be called once the model will no longer be modified.
+    /// @param[in] paramValues This comes from the optimizer.
+    /// @param[in] model Used to access quantities from the state.
+    /// @param[in,out] initState A modified initial state.
     void applyParametersToInitState(const PSimParameterValueSet& paramValues,
          const Model& model, SimTK::State& initState) const;
+
+    /// Modify the state's cache according to the given parameters. This can
+    /// only be called if the model will no longer be modified, and is likely
+    /// called throughout the simulation to modify quantities such as control
+    /// values.
+    /// @param[in] paramValues This comes from the optimizer.
+    /// @param[in] model Used to access quantities from the state.
+    /// @param[in,out] s The state's cache is modified.
     void applyParametersToStateCache(const PSimParameterValueSet& paramValues,
          const Model& model, const SimTK::State& s) const;
 
@@ -131,7 +144,6 @@ public:
     /// @returns Unnormalized parameter values.
     PSimParameterValueSet createParameterValueSet(
             const SimTK::Vector& optParamValues) const;
-
     /// @}
 
     /// @name Sending parameters to and from the Optimizer.
@@ -140,7 +152,7 @@ public:
     /// Copies the Objectives into the provided Model. The model then owns
     /// these goals.
     /// @returns A vector of the Objectives thatare in the model.
-    std::vector<const PSimGoal *> addGoalsToModel(Model& model) const;
+    std::vector<const PSimGoal* > addGoalsToModel(Model& model) const;
 
     /// Builds up the objective function using the <tt>goals</tt>.
     /// @param[in] pvalset The optimizer parameters.
