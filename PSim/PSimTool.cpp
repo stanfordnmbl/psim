@@ -39,8 +39,8 @@ unsigned int PSimTool::numOptimizerParameters() const
     return sum;
 }
 
-void PSimTool::applyParameters(const PSimParameterValueSet & paramValues,
-        Model &model, SimTK::State& initState) const
+void PSimTool::applyParametersToModel(const PSimParameterValueSet& paramValues,
+        Model& model) const
 {
     // Indexes through tool parameters.
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
@@ -48,43 +48,59 @@ void PSimTool::applyParameters(const PSimParameterValueSet & paramValues,
         // If the parameter is to be optimized.
         if (param.get_optimize()) {
             const double value = paramValues.get(param.getName()).get_value();
-            param.apply(value, model, initState);
+            param.applyToModel(value, model);
         }
         else {
             // Use the default value of the parameter.
-            // TODO don't need to do this after the first call.
-            param.apply(param.get_default_value(), model, initState);
+            // TODO if we decide not to create a new copy of the model, 
+            // we don't need to do this after the first call.
+            param.applyToModel(param.get_default_value(), model);
         }
     }
+}
 
-    /**
-    for (unsigned int ip = 0; ip < paramValues.getSize(); ++ip) {
-        const PSimParameterValue& pval = paramValues[ip];
-        const PSimParameter& param = get_parameters().get(pval.getName());
-        param.apply(pval.get_value(), model, initState);
-        // TODO this neglects to set default values.
-    }
-    */
-    /**
-    // Indexes through optimizer parameters.
-    unsigned int iop = 0;
-
+void PSimTool::applyParametersToInitState(
+        const PSimParameterValueSet& paramValues,
+        const Model& model, SimTK::State& initState) const
+{
     // Indexes through tool parameters.
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
-        const PSimParameter& param = get_parameters(itp);
+        const PSimParameter & param = get_parameters(itp);
         // If the parameter is to be optimized.
         if (param.get_optimize()) {
-            param.apply(param.unnormalized(optParamValues[iop]),
-                    model, initState);
-            iop++;
+            const double value = paramValues.get(param.getName()).get_value();
+            param.applyToInitialState(value, model, initState);
         }
         else {
             // Use the default value of the parameter.
-            // TODO don't need to do this after the first call.
-            param.apply(param.get_default_value(), model, initState);
+            // TODO if we decide not to create a new copy of the model, 
+            // we don't need to do this after the first call.
+            param.applyToInitialState(param.get_default_value(), model,
+                    initState);
         }
     }
-    */
+}
+
+void PSimTool::applyParametersToStateCache(
+        const PSimParameterValueSet& paramValues,
+        const Model& model, const SimTK::State& s) const
+{
+    // TODO this could be costly?
+    // Indexes through tool parameters.
+    for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
+        const PSimParameter & param = get_parameters(itp);
+        // If the parameter is to be optimized.
+        if (param.get_optimize()) {
+            const double value = paramValues.get(param.getName()).get_value();
+            param.applyToStateCache(value, model, s);
+        }
+        else {
+            // Use the default value of the parameter.
+            // TODO if we decide not to create a new copy of the model, 
+            // we don't need to do this after the first call.
+            param.applyToStateCache(param.get_default_value(), model, s);
+        }
+    }
 }
 
 void PSimTool::initialOptimizerParameterValuesAndLimits(
@@ -136,40 +152,12 @@ PSimParameterValueSet PSimTool::run() const
     // TODO print the updated model?
     // TODO print the objective values (at each iteration?)
     return get_solver().solve(*this);
-    /*
-    // Get initial guess, and parameter limits.
-    // ========================================
-    SimTK::Vector results;
-    SimTK::Vector lowerLimits;
-    SimTK::Vector upperLimits;
-    initialOptimizerParameterValuesAndLimits(results, lowerLimits, upperLimits);
-
-    // Setup the solver.
-    // =================
-    OptimizerSystem optsys(*this);
-    optsys.setParameterLimits(lowerLimits, upperLimits);
-
-    // Create an Optimizer.
-    // ====================
-    // TODO plug in a solver.
-    SimTK::Optimizer opt(optsys);
-    opt.setConvergenceTolerance(get_optimization_convergence_tolerance());
-    // TODO don't bother when using CMAES.
-    opt.useNumericalGradient(true);
-
-    // Optimize!
-    // =========
-    opt.optimize(results);
-
-    // Return the solution to the optimization.
-    // ========================================
-    return createParameterValueSet(results);
-    */
 }
 
 PSimParameterValueSet PSimTool::createParameterValueSet(
         const SimTK::Vector &optParamValues) const
 {
+    // TODO will have to change if the solver adds its own parameters.
     PSimParameterValueSet pvalset;
 
     // Indexes through optimizer parameters.
@@ -210,7 +198,7 @@ void PSimTool::checkForUnusedInitialGuesses() const {
     }
 }
 
-std::vector<const PSimGoal *> PSimTool::addGoalsToModel(Model& model) const
+std::vector<const PSimGoal*> PSimTool::addGoalsToModel(Model& model) const
 {
     std::vector<const PSimGoal *> goals;
     for (unsigned int ig = 0; ig < getProperty_goals().size(); ++ig) {

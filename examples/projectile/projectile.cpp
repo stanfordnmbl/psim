@@ -12,8 +12,8 @@
 // Angle of the projectile's initial velocity with the horizontal, in degrees.
 class Angle : public OpenSim::PSimParameter {
 OpenSim_DECLARE_CONCRETE_OBJECT(Angle, OpenSim::PSimParameter);
-    virtual void apply(const double param,
-            Model& model, SimTK::State& initState) const {
+    void applyToInitialState(const double param,
+            const Model& model, SimTK::State& initState) const override {
 
         const double angle = param * SimTK::Pi / 180.0;
 

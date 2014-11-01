@@ -9,11 +9,8 @@
 #include "PSimSolver.h"
 #include "StateTrajectory.h"
 
-// TODO objective -> goal
 // TODO hierarchy of different types of goals. (terminal, integrating)
 // TODO output goals values to file
-// TODO modular solvers.
-// TODO use opensim namespace
 // TODO clean up the examples.
 // TODO replicate the optimal control example of flight from ACADO.
 // TODO even if we use the model file name instead, we should store one copy
@@ -38,17 +35,19 @@
 //      Applying control parameters might mean altering the state.
 // TODO when optimizing a model, how do we apply control parameters, which could be 92 muscles * 100 time steps?
 
-// TODO put this line in all header files with properties.
+
+// 1. ModelParameters, InitialStateParameters, StateCacheParameters
+// 2. hierarchy of goals
+// 3. convert predictivesim code to this framework.
 
 namespace OpenSim {
 
-/**
- * A framework for performing predictive simulations. We optimize a model's
- * ability to carry out a specific task by varying certain PSimParameter's of the
- * model and its initial state, and evaluating the performance of the task via
- * PSimGoal's. TODO You can define your own PSimParameter's, and choose how they
- * affect your model and/or initial state. Then, you define your PSimGoal's
- * (e.g.  maximum jump height).
+/** A framework for performing predictive simulations. We optimize a model's
+ * ability to carry out a specific task by varying certain PSimParameter's of
+ * the model and its state, and evaluating the performance of the task
+ * via PSimGoal's. You can define your own PSimParameter's, and choose how
+ * they affect your model and/or state. Then, you define your PSimGoal's (e.g.
+ * maximum jump height).
  */
 class PSimTool : public Object
 {
@@ -96,11 +95,11 @@ public:
     /// can be set to not be optimized and are not normalized.
     /// Optimizer parameters are normalized and don't contain tool
     /// parameters that are not being optimized.
-    // These methods handle the mapping between tool and optimizer parameters.
+    /// These methods handle the mapping between tool and optimizer parameters.
     /// @{
 
-    /// The sum of the number of scalar parameters across the OpenSim::PSimParameter's
-    /// that are set to be optimized.
+    /// The sum of the number of scalar parameters across the
+    /// OpenSim::PSimParameter's that are set to be optimized.
     unsigned int numOptimizerParameters() const;
 
     /// Modify the model according to the given parameters. For parameters
@@ -108,12 +107,14 @@ public:
     /// @param[in] paramValues this is what the optimizer gives to the
     ///     OptimizerSystem.
     /// @param[in,out] model The model to modify with these parameters.
-    void applyParameters(const PSimParameterValueSet & paramValues,
-            Model& model, SimTK::State& initState) const;
-    // void applyModelParameters(const PSimParameterValueSet& paramValues,
-    //      Model& model) const;
-    // void applyStateParameters(const PSimParameterValueSet& paramValues,
-    //      SimTK::State& state, bool isInitialState) const;
+    // void applyParameters(const PSimParameterValueSet & paramValues,
+    //         Model& model, SimTK::State& initState) const;
+    void applyParametersToModel(const PSimParameterValueSet& paramValues,
+         Model& model) const;
+    void applyParametersToInitState(const PSimParameterValueSet& paramValues,
+         const Model& model, SimTK::State& initState) const;
+    void applyParametersToStateCache(const PSimParameterValueSet& paramValues,
+         const Model& model, const SimTK::State& s) const;
 
     /// Initial guess to send to the optimizer, with lower and upper limits.
     /// Uses the values from the <tt>initial_guess</tt> property. For
@@ -146,7 +147,7 @@ public:
     /// @param[in] model The pvalset has already been applied to this model.
     /// @param[in] finalState The state at the end of the simulation.
     static SimTK::Real evaluateGoals(
-            const std::vector<const PSimGoal *> &goals,
+            const std::vector<const PSimGoal*> & goals,
             const PSimParameterValueSet &pvalset,
             const Model &model,
             const StateTrajectory& states);

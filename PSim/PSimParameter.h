@@ -53,8 +53,12 @@ public:
 
     /// This is the core method of this class. Apply the given
     /// parameter to the Model and the initial state of the simulation.
-    virtual void apply(const double param,
-            Model& model, SimTK::State& initState) const {}
+    virtual void applyToModel(const double param,
+            Model& model) const {}
+    virtual void applyToInitialState(const double param,
+            const Model& model, SimTK::State& initState) const {}
+    virtual void applyToStateCache(const double param,
+            const Model& model, const SimTK::State& s) const {}
 
     /// This is used to compute a value that can be sent to
     /// to the optimizer (e.g., for initial parameters).
