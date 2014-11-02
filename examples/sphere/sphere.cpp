@@ -7,8 +7,7 @@
 
 class Obj : public PSimGoal {
 OpenSim_DECLARE_CONCRETE_OBJECT(Obj, PSimGoal);
-    SimTK::Real evaluate(const OpenSim::PSimParameterValueSet & pvalset,
-            const Model& model,
+    SimTK::Real extendEvaluate(const OpenSim::PSimParameterValueSet & pvalset,
             const OpenSim::StateTrajectory& states) const
     {
         return pow(pvalset[0].get_value() - 3, 2);

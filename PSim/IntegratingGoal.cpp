@@ -33,7 +33,7 @@ public:
                 "DerivMeasure<T>::Implementation::"
                 "calcCachedValueVirtual(): "
                 "derivOrder %d seen but only 0 allowed.", derivOrder);
-        value = m_obj.derivative(s);
+        value = m_obj.integrand(s);
     }
 private:
     const IntegratingGoal & m_obj;

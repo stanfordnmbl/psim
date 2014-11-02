@@ -34,11 +34,10 @@ OpenSim_DECLARE_CONCRETE_OBJECT(Angle, OpenSim::PSimParameter);
 // ===========
 class Range : public OpenSim::PSimGoal {
 OpenSim_DECLARE_CONCRETE_OBJECT(Range, OpenSim::PSimGoal);
-    SimTK::Real evaluate(const OpenSim::PSimParameterValueSet & pvalset,
-            const Model& model,
+    SimTK::Real extendEvaluate(const OpenSim::PSimParameterValueSet & pvalset,
             const OpenSim::StateTrajectory& states) const override
     {
-        const Coordinate& c = model.getCoordinateSet().get("x");
+        const Coordinate& c = getModel().getCoordinateSet().get("x");
         return -c.getValue(states.back());
     }
 };
@@ -46,7 +45,7 @@ OpenSim_DECLARE_CONCRETE_OBJECT(Range, OpenSim::PSimGoal);
 // TODO put this in a different example.
 class Test : public OpenSim::IntegratingGoal {
 OpenSim_DECLARE_CONCRETE_OBJECT(Test, OpenSim::IntegratingGoal);
-    SimTK::Real derivative(const SimTK::State& s) const override {
+    SimTK::Real integrand(const SimTK::State& s) const override {
         return 1;
     }
     void realizeReport(const SimTK::State& s) const { 
@@ -76,8 +75,7 @@ public:
         //constructInfrastructure();
     }
     MaxHeight(const MaxHeight& mh) : OpenSim::PSimGoal(mh), m_max(this) {}
-    SimTK::Real evaluate(const OpenSim::PSimParameterValueSet & pvalset,
-            const Model& model,
+    SimTK::Real extendEvaluate(const OpenSim::PSimParameterValueSet & pvalset,
             const OpenSim::StateTrajectory& states) const override {
         return -m_max.maximum(states.back());
     }

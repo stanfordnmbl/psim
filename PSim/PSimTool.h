@@ -152,16 +152,14 @@ public:
     /// Copies the Objectives into the provided Model. The model then owns
     /// these goals.
     /// @returns A vector of the Objectives thatare in the model.
-    std::vector<const PSimGoal* > addGoalsToModel(Model& model) const;
+    std::vector<const PSimGoal*> addGoalsToModel(Model& model) const;
 
     /// Builds up the objective function using the <tt>goals</tt>.
     /// @param[in] pvalset The optimizer parameters.
-    /// @param[in] model The pvalset has already been applied to this model.
     /// @param[in] finalState The state at the end of the simulation.
     static SimTK::Real evaluateGoals(
-            const std::vector<const PSimGoal*> & goals,
-            const PSimParameterValueSet &pvalset,
-            const Model &model,
+            const std::vector<const PSimGoal*>& goals,
+            const PSimParameterValueSet& pvalset,
             const StateTrajectory& states);
     /// @}
 

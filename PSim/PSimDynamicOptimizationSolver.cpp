@@ -72,7 +72,7 @@ int PSimDynamicOptimizationSolver::OptimizerSystem::objectiveFunc(
 
     // Add PSimGoal's to Model as ModelComponents. Do this after applying the
     // parameters, as the goals may depend on the effect of parameters.
-    const auto objectives = m_pstool.addGoalsToModel(model);
+    const auto goals = m_pstool.addGoalsToModel(model);
 
     // Mechanism to record the trajectory of successful states.
     // --------------------------------------------------------
@@ -99,7 +99,7 @@ int PSimDynamicOptimizationSolver::OptimizerSystem::objectiveFunc(
     // Compute objective function value with the goals.
     // ================================================
     const StateTrajectory& states = statesCollector->getStateTrajectory();
-    f = m_pstool.evaluateGoals(objectives, pvalset, model, states);
+    f = m_pstool.evaluateGoals(goals, pvalset, states);
 
     return 0;
 }

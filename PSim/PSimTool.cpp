@@ -184,10 +184,10 @@ PSimParameterValueSet PSimTool::createParameterValueSet(
 
 void PSimTool::checkForUnusedInitialGuesses() const {
     for (unsigned int ig = 0; ig < get_initial_guess().getSize(); ++ig) {
-        const PSimParameterValue & initialGuess = get_initial_guess().get(ig);
+        const PSimParameterValue& initialGuess = get_initial_guess().get(ig);
         for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp)
         {
-            const PSimParameter & param = get_parameters(itp);
+            const PSimParameter& param = get_parameters(itp);
             if (initialGuess.getName() == param.getName()) {
                 continue;
             }
@@ -200,11 +200,11 @@ void PSimTool::checkForUnusedInitialGuesses() const {
 
 std::vector<const PSimGoal*> PSimTool::addGoalsToModel(Model& model) const
 {
-    std::vector<const PSimGoal *> goals;
+    std::vector<const PSimGoal*> goals;
     for (unsigned int ig = 0; ig < getProperty_goals().size(); ++ig) {
-        const PSimGoal &goal = get_goals(ig);
+        const PSimGoal& goal = get_goals(ig);
         if (goal.get_enabled()) {
-            PSimGoal * clone = goal.clone();
+            PSimGoal* clone = goal.clone();
             // The model now owns this clone.
             model.addModelComponent(clone);
             // Append to the return vector.
@@ -215,15 +215,15 @@ std::vector<const PSimGoal*> PSimTool::addGoalsToModel(Model& model) const
 }
 
 SimTK::Real PSimTool::evaluateGoals(
-        const std::vector<const PSimGoal *> &objectives,
-        const PSimParameterValueSet &pvalset,
-        const Model &model,
-        const StateTrajectory &states)
+        const std::vector<const PSimGoal*>& objectives,
+        const PSimParameterValueSet& pvalset,
+        const StateTrajectory& states)
 {
     SimTK::Real f = 0;
     for (auto obj : objectives) {
         if (obj->get_enabled()) {
-            f += obj->get_weight() * obj->evaluate(pvalset, model, states);
+        // TODO move enabled check to PSimGoal.
+            f += obj->get_weight() * obj->evaluate(pvalset, states);
         }
     }
     return f;
