@@ -1,7 +1,7 @@
-#ifndef OPENSIM_PSIM_INTEGRATING_OBJECTIVE_H_
-#define OPENSIM_PSIM_INTEGRATING_OBJECTIVE_H_
+#ifndef REGISTERTYPES_OSIMPSIM_H_
+#define REGISTERTYPES_OSIMPSIM_H_
 /* -------------------------------------------------------------------------- *
- *                    OpenSim:  IntegratingGoal.h                             *
+ *                    OpenSim:  RegisterTypes_osimPSim.h                      *
  * -------------------------------------------------------------------------- *
  * The OpenSim API is a toolkit for musculoskeletal modeling and simulation.  *
  * See http://opensim.stanford.edu and the NOTICE file for more information.  *
@@ -23,38 +23,14 @@
  * limitations under the License.                                             *
  * -------------------------------------------------------------------------- */
 
-#include "PSimGoal.h"
-#include "StateTrajectory.h"
-
-#include <OpenSim/Simulation/Model/Model.h>
-
 #include "osimPSimDLL.h"
 
-namespace OpenSim {
+extern "C" {
 
-/// This objective value is obtained by integrating a quantity over the
-/// duration of the simulation.
-class OSIMPSIM_API IntegratingGoal : public PSimGoal
-{
-OpenSim_DECLARE_ABSTRACT_OBJECT(IntegratingGoal, PSimGoal);
-public:
+OSIMPSIM_API void RegisterTypes_osimPSim(); 
 
-    /// The quantity to integrate.
-    virtual SimTK::Real integrand(const SimTK::State& s) const = 0;
+}
 
-private:
+#endif // REGISTERTYPES_OSIMPSIM_H_
 
-    SimTK::Real extendEvaluate(const PSimParameterValueSet& pvalset,
-            const StateTrajectory& states) const override final {
-        return m_integrateMeasure.getValue(states.back());
-    }
 
-    void addToSystem(SimTK::MultibodySystem& system) const override;
-
-    SimTK::Measure m_integrateMeasure;
- 
-};
-
-} // namespace OpenSim
-
-#endif // OPENSIM_PSIM_INTEGRATING_OBJECTIVE_H_

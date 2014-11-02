@@ -1,5 +1,27 @@
 #ifndef OPENSIM_PSIM_TOOL_H_
 #define OPENSIM_PSIM_TOOL_H_
+/* -------------------------------------------------------------------------- *
+ *                    OpenSim:  PSimTool.h                                    *
+ * -------------------------------------------------------------------------- *
+ * The OpenSim API is a toolkit for musculoskeletal modeling and simulation.  *
+ * See http://opensim.stanford.edu and the NOTICE file for more information.  *
+ * OpenSim is developed at Stanford University and supported by the US        *
+ * National Institutes of Health (U54 GM072970, R24 HD065690) and by DARPA    *
+ * through the Warrior Web program.                                           *
+ *                                                                            *
+ * Copyright (c) 2005-2014 Stanford University and the Authors                *
+ * Author(s): Chris Dembia                                                    *
+ *                                                                            *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may    *
+ * not use this file except in compliance with the License. You may obtain a  *
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0.         *
+ *                                                                            *
+ * Unless required by applicable law or agreed to in writing, software        *
+ * distributed under the License is distributed on an "AS IS" BASIS,          *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   *
+ * See the License for the specific language governing permissions and        *
+ * limitations under the License.                                             *
+ * -------------------------------------------------------------------------- */
 
 #include <OpenSim/Common/Object.h>
 
@@ -9,12 +31,13 @@
 #include "PSimSolver.h"
 #include "StateTrajectory.h"
 
+#include "osimPSimDLL.h"
+
 // TODO hierarchy of different types of goals. (terminal, integrating)
 // TODO output goals values to file
 // TODO clean up the examples.
 // TODO replicate the optimal control example of flight from ACADO.
 // TODO even if we use the model file name instead, we should store one copy
-// TODO split into modelparameters and stateparameters.
 // locally and just keep making copies of that, instead of reading from the
 // file each time (avoid parsing).
 // TODO allow replaying a simulation, not running an optimization,
@@ -23,8 +46,9 @@
 // TODO a probe objective, or an integratingobjective. (spring osc. freq).
 // TODO cmaes
 // TODO event handling to opensim-core.
+
 // TODO register types.
-// TODO separate into two kinds of parameters (ModelParameters, InitialStateParameters, ControlParameters?).
+//
 // TODO types of problems: optimizing a model, vs the controller contains an optimization.
 // optimizing a model and simulation:
 //  - direct collocation
@@ -49,7 +73,7 @@ namespace OpenSim {
  * they affect your model and/or state. Then, you define your PSimGoal's (e.g.
  * maximum jump height).
  */
-class PSimTool : public Object
+class OSIMPSIM_API PSimTool : public Object
 {
 OpenSim_DECLARE_CONCRETE_OBJECT(PSimTool, Object);
 public:
@@ -65,6 +89,7 @@ public:
             "The time at which all the simulations start (seconds).");
     OpenSim_DECLARE_PROPERTY(final_time, double,
             "The time at which the simulations end (seconds).");
+    // TODO might belong in the solver; may not make sense for some solvers.
     OpenSim_DECLARE_PROPERTY(visualize, bool,
             "During solving, show the motion using the simbody-visualizer.");
     OpenSim_DECLARE_LIST_PROPERTY(parameters, PSimParameter,

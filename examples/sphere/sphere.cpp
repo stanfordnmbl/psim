@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include <PSim/PSim.h>
+#include <PSim/osimPSim.h>
 
 class Obj : public PSimGoal {
 OpenSim_DECLARE_CONCRETE_OBJECT(Obj, PSimGoal);

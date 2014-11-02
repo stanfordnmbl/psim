@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include <PSim/PSim.h>
+#include <PSim/osimPSim.h>
 #include <OpenSim/OpenSim.h>
 #include <OpenSim/Simulation/SimbodyEngine/PlanarJoint.h>
 

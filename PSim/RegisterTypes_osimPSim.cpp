@@ -1,7 +1,5 @@
-#ifndef OPENSIM_PSIM_INTEGRATING_OBJECTIVE_H_
-#define OPENSIM_PSIM_INTEGRATING_OBJECTIVE_H_
 /* -------------------------------------------------------------------------- *
- *                    OpenSim:  IntegratingGoal.h                             *
+ *                    OpenSim:  RegisterTypes_osimPSim.cpp                    *
  * -------------------------------------------------------------------------- *
  * The OpenSim API is a toolkit for musculoskeletal modeling and simulation.  *
  * See http://opensim.stanford.edu and the NOTICE file for more information.  *
@@ -23,38 +21,29 @@
  * limitations under the License.                                             *
  * -------------------------------------------------------------------------- */
 
+#include "ConcreteParameters.h"
+#include "PSimDynamicOptimizationSolver.h"
 #include "PSimGoal.h"
+#include "PSimParameter.h"
+#include "PSimParameterValue.h"
+#include "PSimSolver.h"
+#include "PSimTool.h"
+#include "StatesCollector.h"
 #include "StateTrajectory.h"
 
-#include <OpenSim/Simulation/Model/Model.h>
+#include <string>
+#include <iostream>
+#include <exception>
 
-#include "osimPSimDLL.h"
+using namespace OpenSim;
 
-namespace OpenSim {
-
-/// This objective value is obtained by integrating a quantity over the
-/// duration of the simulation.
-class OSIMPSIM_API IntegratingGoal : public PSimGoal
+OSIMPSIM_API void RegisterTypes_osimPSim()
 {
-OpenSim_DECLARE_ABSTRACT_OBJECT(IntegratingGoal, PSimGoal);
-public:
-
-    /// The quantity to integrate.
-    virtual SimTK::Real integrand(const SimTK::State& s) const = 0;
-
-private:
-
-    SimTK::Real extendEvaluate(const PSimParameterValueSet& pvalset,
-            const StateTrajectory& states) const override final {
-        return m_integrateMeasure.getValue(states.back());
-    }
-
-    void addToSystem(SimTK::MultibodySystem& system) const override;
-
-    SimTK::Measure m_integrateMeasure;
- 
-};
-
-} // namespace OpenSim
-
-#endif // OPENSIM_PSIM_INTEGRATING_OBJECTIVE_H_
+    Object::registerType(PSimCoordInitialValueParameter());
+    Object::registerType(PSimCoordInitialSpeedParameter());
+	Object::registerType(PSimDynamicOptimizationSolver());
+	Object::registerType(PSimTool());
+	Object::registerType(PSimParameterValue());
+	Object::registerType(PSimParameterValueSet());
+	Object::registerType(StatesCollector());
+}
