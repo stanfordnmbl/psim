@@ -10,3 +10,6 @@ set_target_properties(psim PROPERTIES DEFINE_SYMBOL OSIMPSIM_EXPORTS)
 
 target_link_libraries(psim ${OpenSim_LIBRARIES})
 
+install(FILES ${HEADERS} DESTINATION include/PSim)
+install(TARGETS psim EXPORT PSimTargets DESTINATION lib)
+

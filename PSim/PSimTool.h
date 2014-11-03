@@ -64,6 +64,11 @@
 // 2. hierarchy of goals
 // 3. convert predictivesim code to this framework.
 
+// create application
+// convert predictivesim
+//      create new solver
+//      create parameters & objectives.
+
 namespace OpenSim {
 
 /** A framework for performing predictive simulations. We optimize a model's
@@ -85,6 +90,8 @@ public:
             "Path to the base (unmodified) model file (.osim) to optimize.");
     OpenSim_DECLARE_PROPERTY(solver, PSimSolver,
             "The algorithm that alters parameters to achieve goals.");
+    OpenSim_DECLARE_PROPERTY(results_dir, std::string,
+            "Directory in which results files will be printed.");
     OpenSim_DECLARE_PROPERTY(initial_time, double,
             "The time at which all the simulations start (seconds).");
     OpenSim_DECLARE_PROPERTY(final_time, double,
@@ -103,9 +110,15 @@ public:
             "the parameter's default value is used. If you supply values "
             "for parameters that are not set to be optimized, those values "
             "are ignored.");
+    // OpenSim_DECLARE_LIST_PROPERTY(plugin_libraries, std::string,
+    //      "List of dynamic libraries (dll's, so's) (OpenSim plugins) to "
+    //      "load before running. Separate multiple libraries with spaces.");
     /// @}
 
     PSimTool();
+
+    /// Construct a PSimTool from an XML file.
+    PSimTool(const std::string& fileName, bool updateFromXMLNode = true);
 
     // TODO print out the new model? that's what is optimized...
     /// Perform the predictive simulation optimization.

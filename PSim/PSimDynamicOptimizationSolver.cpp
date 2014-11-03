@@ -72,7 +72,7 @@ PSimParameterValueSet PSimDynamicOptimizationSolver::extendSolve(
 }
 
 PSimDynamicOptimizationSolver::OptimizerSystem::OptimizerSystem(
-        const PSimTool & tool)
+        const PSimTool& tool)
 : SimTK::OptimizerSystem(tool.numOptimizerParameters()), m_pstool(tool)
 {
 }

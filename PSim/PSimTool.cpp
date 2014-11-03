@@ -32,11 +32,19 @@ PSimTool::PSimTool()
     checkForUnusedInitialGuesses();
 }
 
+PSimTool::PSimTool(const std::string& fileName, bool updateFromXMLNode)
+    : Object(fileName, updateFromXMLNode)
+{
+    constructProperties();
+    checkForUnusedInitialGuesses();
+}
+
 void PSimTool::constructProperties() {
 
     constructProperty_base_model(Model());
     constructProperty_solver(PSimDynamicOptimizationSolver());
 
+    constructProperty_results_dir("");
     constructProperty_initial_time(0);
     constructProperty_final_time(1);
     constructProperty_visualize(false);

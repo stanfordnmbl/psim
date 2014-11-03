@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.6)
 
 project(PSim)
 
-find_package(OpenSim)
+find_package(OpenSim REQUIRED)
 
 # We use C++11 language features.
 # -------------------------------
@@ -25,6 +25,6 @@ endif()
 
 add_subdirectory(doc)
 add_subdirectory(PSim)
-# TODO add_subdirectory(applications)
+add_subdirectory(applications)
 add_subdirectory(examples)
-
+add_subdirectory(cmake)
