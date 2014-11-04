@@ -48,14 +48,12 @@ public:
     OpenSim_DECLARE_PROPERTY(value, double, "Value of the PSimParameter.")
     /// @}
 
-    PSimParameterValue()
-    {
+    PSimParameterValue() {
         constructProperties();
     }
 
 private:
-    void constructProperties()
-    {
+    void constructProperties() {
         constructProperty_value(0);
     }
 

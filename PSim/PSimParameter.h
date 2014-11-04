@@ -28,6 +28,14 @@
 
 #include "osimPSimDLL.h"
 
+// Parameters should not be passed a map, for backwards compatibility. The
+// parameter should only apply itself for parameters given to it. If there are
+// hard-coded parameter names, then a new version of a class may hard-code in a
+// new parameter name. Then, old XML files which don't provide a parameter
+// object for that hardcoded name will cause the code to not be able to find
+// the parameeter. Thus, individual parameters only apply themselves if
+// instructed by the tool, etc.
+
 namespace OpenSim {
 
 // TODO template<int N>
@@ -124,5 +132,48 @@ private:
 };
 
 } // namespace OpenSim
+
+/*
+class OSIMPSIM_API PSimParameter : public Object {
+
+    OpenSim_DECLARE_PROPERTY(optimize, bool,
+            "Optimize this parameter (false means default value is used).");
+    OpenSim_DECLARE_PROPERTY(lower_limit, double,
+            "Lower limit for parameter; for optimizer bounds. Default: -Inf");
+    OpenSim_DECLARE_PROPERTY(upper_limit, double,
+            "Upper limit for parameter; for optimizer bounds. Default: Inf");
+    OpenSim_DECLARE_PROPERTY(lower_opt, double,
+            "The value of lower_limit used in the optimizer. Default: 0");
+    OpenSim_DECLARE_PROPERTY(upper_opt, double,
+            "The value of upper_limit used in the optimizer. Default: 1");
+    OpenSim_DECLARE_PROPERTY(default_value, double,
+            "Used if optimize=false. Default initial guess. Default: 0.");
+
+    PSimParameter();
+
+    unsigned int numScalarParameters() const { return 1; }
+
+    double normalized(double param) const;
+    double unnormalized(double normalizedParam) const;
+
+private:
+    void constructProperties();
+};
+
+class OSIMPSIM_API PSimDesigner : public Object {
+public:
+    OpenSim_DECLARE_LIST_PROPERTY(parameters, PSimParameter);
+
+    void applyToModel(const PSimParameterMap& params,
+            Model& model) const
+    { return extendApplyToModel(param, model); }
+
+private:
+
+    virtual void extendApplyToModel(const PSimParameterMap& params,
+            Model& model) const {}
+
+};
+*/
 
 #endif // OPENSIM_PSIM_PARAMETER_H_

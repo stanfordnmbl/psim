@@ -196,7 +196,7 @@ PSimParameterValueSet PSimTool::createParameterValueSet(
     // Indexes through tool parameters.
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
 
-        const PSimParameter & param = get_parameters(itp);
+        const PSimParameter& param = get_parameters(itp);
 
         // If the parameter was optimized.
         if (param.get_optimize()) {

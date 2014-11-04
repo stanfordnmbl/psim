@@ -47,9 +47,20 @@
 // TODO cmaes
 // TODO event handling to opensim-core.
 
-// TODO register types.
+// TODO Ajay talked about pieces/components that could be moved around and used
+// anywhere. To this end:
+// TODO create an Objective class and a Design/Parameters class. Create another
+// layer of separation. Those classes are then responsible for performing
+// actions across all objectives or parameters, and the related methods can be
+// moved out of the tool itself. The tool simply connects Parameters, and
+// Objectives to a Solver. Ajay is saying a model controller could contain its
+// own parameters and objectives and solver (MPC). Objectives should be usable
+// in general. They should export an interface that says what the interface
+// would do, and it should make minimal assumptions about how it's being used.
 //
-// TODO types of problems: optimizing a model, vs the controller contains an optimization.
+// TODO types of problems: optimizing a model, vs the controller contains an
+// optimization.
+//
 // optimizing a model and simulation:
 //  - direct collocation
 //  - CMAES
