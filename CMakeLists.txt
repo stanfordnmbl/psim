@@ -7,9 +7,8 @@ find_package(OpenSim REQUIRED)
 # CMAKE_BUILD_TYPE
 # ----------------
 if(NOT MSVC AND NOT XCODE AND NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-        "Choose the type of build, options are: "
-        "None Debug Release RelWithDebInfo MinSizeRel."
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING
+        "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
         FORCE)
 endif()
 

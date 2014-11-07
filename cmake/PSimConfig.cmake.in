@@ -1,0 +1,8 @@
+# Defines:
+#   PSIM_INCLUDE_DIRS, for include_directories().
+#   PSIM_LIB_DIR, for link_directories().
+#   psim, the PSim library target, for target_link_libraries().
+
+set(@CMAKE_PROJECT_NAME@_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
+set(@CMAKE_PROJECT_NAME@_LIB_DIR "@CMAKE_INSTALL_PREFIX@/lib")
+include("@CMAKE_INSTALL_PREFIX@/cmake/@CMAKE_PROJECT_NAME@Targets.cmake")
