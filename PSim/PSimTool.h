@@ -129,7 +129,7 @@ public:
     PSimTool();
 
     /// Construct a PSimTool from an XML file.
-    PSimTool(const std::string& fileName, bool updateFromXMLNode = true);
+    PSimTool(const std::string& fileName);
 
     // TODO print out the new model? that's what is optimized...
     /// Perform the predictive simulation optimization.

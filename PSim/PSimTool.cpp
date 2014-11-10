@@ -32,8 +32,8 @@ PSimTool::PSimTool()
     checkForUnusedInitialGuesses();
 }
 
-PSimTool::PSimTool(const std::string& fileName, bool updateFromXMLNode)
-    : Object(fileName, updateFromXMLNode)
+PSimTool::PSimTool(const std::string& fileName)
+    : Object(fileName, false)
 {
     constructProperties();
     checkForUnusedInitialGuesses();
