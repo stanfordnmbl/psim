@@ -126,7 +126,7 @@ private:
         constructProperty_required_stage(SimTK::Stage::Dynamics);
     }
 
-    void addToSystem(SimTK::MultibodySystem& system) const override {
+    void extendAddToSystem(SimTK::MultibodySystem& system) const override {
         // TODO is this okay for memory?
         system.addEventHandler(
                 new SimbodyHandler(SimTK::Stage(get_required_stage()), this));

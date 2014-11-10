@@ -60,9 +60,9 @@ private:
     const IntegratingGoal & m_obj;
 };
 
-void IntegratingGoal::addToSystem(SimTK::MultibodySystem& system) const
+void IntegratingGoal::extendAddToSystem(SimTK::MultibodySystem& system) const
 {
-    Super::addToSystem(system);
+    Super::extendAddToSystem(system);
 
     DerivMeasure<SimTK::Real> derivMeasure(system, *this);
     SimTK::Measure::Constant initCond(system, 0.0);

@@ -49,7 +49,7 @@ private:
         return m_integrateMeasure.getValue(states.back());
     }
 
-    void addToSystem(SimTK::MultibodySystem& system) const override;
+    void extendAddToSystem(SimTK::MultibodySystem& system) const override;
 
     SimTK::Measure m_integrateMeasure;
  

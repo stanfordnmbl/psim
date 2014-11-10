@@ -63,9 +63,9 @@ private:
     const Maximum& m_max;
 };
 
-void Maximum::addToSystem(SimTK::MultibodySystem& system) const
+void Maximum::extendAddToSystem(SimTK::MultibodySystem& system) const
 {
-    Super::addToSystem(system);
+    Super::extendAddToSystem(system);
 
     InputMeasure<SimTK::Real> inputMeasure(system, *this);
 
