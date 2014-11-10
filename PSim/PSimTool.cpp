@@ -37,6 +37,7 @@ PSimTool::PSimTool(const std::string& fileName, bool updateFromXMLNode)
 {
     constructProperties();
     checkForUnusedInitialGuesses();
+    updateFromXMLDocument();
 }
 
 void PSimTool::constructProperties() {
