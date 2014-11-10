@@ -26,10 +26,13 @@
 #include "osimPSimDLL.h"
 
 extern "C" {
-
 OSIMPSIM_API void RegisterTypes_osimPSim(); 
-
 }
+
+class PSimInstantiator {
+public:
+    PSimInstantiator();
+};
 
 #endif // REGISTERTYPES_OSIMPSIM_H_
 

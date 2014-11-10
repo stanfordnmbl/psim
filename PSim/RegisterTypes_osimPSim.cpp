@@ -21,6 +21,8 @@
  * limitations under the License.                                             *
  * -------------------------------------------------------------------------- */
 
+#include "RegisterTypes_osimPSim.h"
+
 #include "ConcreteParameters.h"
 #include "PSimDynamicOptimizationSolver.h"
 #include "PSimGoal.h"
@@ -37,6 +39,8 @@
 
 using namespace OpenSim;
 
+static PSimInstantiator psimInstantiator;
+
 OSIMPSIM_API void RegisterTypes_osimPSim()
 {
     Object::registerType(PSimCoordInitialValueParameter());
@@ -46,4 +50,8 @@ OSIMPSIM_API void RegisterTypes_osimPSim()
 	Object::registerType(PSimParameterValue());
 	Object::registerType(PSimParameterValueSet());
 	Object::registerType(StatesCollector());
+}
+
+PSimInstantiator::PSimInstantiator() {
+    RegisterTypes_osimPSim();
 }
