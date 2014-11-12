@@ -34,15 +34,14 @@ namespace OpenSim {
 PSimTool::PSimTool()
 {
     constructProperties();
-    checkForUnusedInitialGuesses();
 }
 
 PSimTool::PSimTool(const std::string& fileName)
     : Object(fileName, false)
 {
     constructProperties();
-    checkForUnusedInitialGuesses();
     updateFromXMLDocument();
+    checkForUnusedInitialGuesses();
     if (!get_base_model_file().empty()) {
         m_model.reset(new Model(getAbsolutePathname(get_base_model_file())));
     }
@@ -273,17 +272,23 @@ PSimParameterValueSet PSimTool::createParameterValueSet(
 
 void PSimTool::checkForUnusedInitialGuesses() const {
     for (unsigned int ig = 0; ig < get_initial_guess().getSize(); ++ig) {
+
         const PSimParameterValue& initialGuess = get_initial_guess().get(ig);
+        bool unused = true;
         for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp)
         {
             const PSimParameter& param = get_parameters(itp);
             if (initialGuess.getName() == param.getName()) {
-                continue;
+                unused = false;
+                break;
             }
         }
-        // TODO make this into a warning. TODO test this.
-        throw OpenSim::Exception("Initial guess '" + initialGuess.getName()
-                + "' does not match any parameter.");
+
+        if (unused) {
+            // TODO make this into a warning. TODO test this.
+            throw OpenSim::Exception("Initial guess '" + initialGuess.getName()
+                    + "' does not match any parameter.");
+        }
     }
 }
 
