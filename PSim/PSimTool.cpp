@@ -41,7 +41,6 @@ PSimTool::PSimTool(const std::string& fileName)
 {
     constructProperties();
     updateFromXMLDocument();
-    checkForUnusedInitialGuesses();
     if (!get_base_model_file().empty()) {
         m_model.reset(new Model(getAbsolutePathname(get_base_model_file())));
     }
@@ -196,6 +195,7 @@ void PSimTool::initialOptimizerParameterValuesAndLimits(
 
 PSimParameterValueSet PSimTool::solve() const
 {
+    checkForUnusedInitialGuesses();
     // TODO print the updated model?
     // TODO print the objective values (at each iteration?)
     return get_solver().solve(*this);
