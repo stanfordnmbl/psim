@@ -262,7 +262,7 @@ PSimParameterValueSet PSimTool::createParameterValueSet(
             PSimParameterValue* pval = new PSimParameterValue();
             pval->setName(param.getName());
             // TODO get subvector.
-            pval->set_value(param.unnormalized(optParamValues(iop)));
+            pval->set_value(param.unnormalized(optParamValues[iop]));
             pvalset.adoptAndAppend(pval);
             // TODO increase index by #scalar parameters.
             iop++;
