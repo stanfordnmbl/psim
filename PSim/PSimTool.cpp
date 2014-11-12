@@ -165,9 +165,9 @@ void PSimTool::initialOptimizerParameterValuesAndLimits(
 
     // Indexes through tool parameters.
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
-        const PSimParameter & param = get_parameters(itp);
+        const PSimParameter& param = get_parameters(itp);
         // If the parameter is to be optimized.
-        if (param.get_optimize()) {
+        if (param.get_apply() && param.get_optimize()) {
             // Ignore values in initial_guess for parameters that are not
             // set to be optimized.
 
@@ -175,7 +175,7 @@ void PSimTool::initialOptimizerParameterValuesAndLimits(
 
             // The user supplied an initial guess.
             if (get_initial_guess().contains(param.getName())) {
-                const PSimParameterValue & pval =
+                const PSimParameterValue& pval =
                         get_initial_guess().get(param.getName());
                 unnormalized = pval.get_value();
             }
@@ -258,8 +258,8 @@ PSimParameterValueSet PSimTool::createParameterValueSet(
         const PSimParameter& param = get_parameters(itp);
 
         // If the parameter was optimized.
-        if (param.get_optimize()) {
-            PSimParameterValue * pval = new PSimParameterValue();
+        if (param.get_apply() && param.get_optimize()) {
+            PSimParameterValue* pval = new PSimParameterValue();
             pval->setName(param.getName());
             // TODO get subvector.
             pval->set_value(param.unnormalized(optParamValues(iop)));
