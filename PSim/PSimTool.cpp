@@ -287,7 +287,7 @@ void PSimTool::checkForUnusedInitialGuesses() const {
         if (unused) {
             // TODO make this into a warning. TODO test this.
             throw OpenSim::Exception("Initial guess '" + initialGuess.getName()
-                    + "' does not match any parameter.");
+                    + "' does not match any parameter.", __FILE__, __LINE__);
         }
     }
 }
