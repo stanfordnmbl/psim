@@ -29,6 +29,8 @@
 
 namespace OpenSim {
 
+// TODO add statevariable. parameter.
+
 /** The value of a coordinate (translation or rotation) at the start
  * of the motion.
  */
@@ -39,15 +41,18 @@ public:
     /// @name Property declarations
     /// @{
     OpenSim_DECLARE_PROPERTY(coordinate_name, std::string,
-            "Name of the coordinate.");
+            "Full path name of the coordinate.");
     /// @}
 
     PSimCoordInitialValueParameter() { constructProperties(); }
 
     void extendApplyToInitialState(const double param,
             const Model& model, SimTK::State& initState) const override {
-        model.getCoordinateSet().get(get_coordinate_name()).
-                setValue(initState, param);
+        const auto& comp = model.getComponent(get_coordinate_name());
+        const auto* coord = static_cast<const Coordinate*>(&comp);
+        if (!coord->getLocked(initState)) {
+            coord->setValue(initState, param);
+        }
     }
 
 private:
@@ -64,15 +69,18 @@ public:
     /// @name Property declarations
     /// @{
     OpenSim_DECLARE_PROPERTY(coordinate_name, std::string,
-            "Name of the coordinate.");
+            "Full path name of the coordinate.");
     /// @}
 
     PSimCoordInitialSpeedParameter() { constructProperties(); }
 
     void extendApplyToInitialState(const double param,
             const Model& model, SimTK::State& initState) const override {
-        model.getCoordinateSet().get(get_coordinate_name()).
-            setSpeedValue(initState, param);
+        const auto& comp = model.getComponent(get_coordinate_name());
+        const auto* coord = static_cast<const Coordinate*>(&comp);
+        if (!coord->getLocked(initState)) {
+            coord->setSpeedValue(initState, param);
+        }
     }
 
 private:
