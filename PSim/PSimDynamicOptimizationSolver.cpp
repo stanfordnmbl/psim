@@ -88,7 +88,8 @@ int PSimDynamicOptimizationSolver::OptimizerSystem::objectiveFunc(
 
     // Initialize model and apply model parameters.
     // ============================================
-    Model model = m_pstool.get_base_model();
+    // Create a copy of the base model.
+    Model model(m_pstool.getBaseModel());
     if (m_pstool.get_visualize()) model.setUseVisualizer(true);
     m_pstool.applyParametersToModel(pvalset, model);
 

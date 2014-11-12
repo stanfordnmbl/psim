@@ -189,7 +189,7 @@ int main()
     OpenSim::PSimTool pstool;
     //pstool.set_visualize(true);
 
-    pstool.set_base_model(createModel());
+    pstool.setBaseModel(createModel());
 
     // Set up parameters.
     // ==================

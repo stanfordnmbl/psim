@@ -38,11 +38,14 @@ PSimTool::PSimTool(const std::string& fileName)
     constructProperties();
     checkForUnusedInitialGuesses();
     updateFromXMLDocument();
+    if (!get_base_model_file().empty()) {
+        m_model.reset(new Model(getAbsolutePathname(get_base_model_file())));
+    }
 }
 
 void PSimTool::constructProperties() {
 
-    constructProperty_base_model(Model());
+    constructProperty_base_model_file("");
     constructProperty_solver(PSimDynamicOptimizationSolver());
 
     constructProperty_results_dir("");

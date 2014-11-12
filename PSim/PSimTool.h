@@ -33,6 +33,7 @@
 
 #include "osimPSimDLL.h"
 
+// TODO create a separate interface that only the solver can get access to.
 // TODO hierarchy of different types of goals. (terminal, integrating)
 // TODO output goals values to file
 // TODO clean up the examples.
@@ -97,8 +98,9 @@ public:
     /// @name Property declarations
     /// @{
     // TODO results_dir
-    OpenSim_DECLARE_PROPERTY(base_model, Model,
-            "Path to the base (unmodified) model file (.osim) to optimize.");
+    OpenSim_DECLARE_PROPERTY(base_model_file, std::string,
+            "Path to model file (.osim) to optimize. "
+            "Only checked on construction.");
     OpenSim_DECLARE_PROPERTY(solver, PSimSolver,
             "The algorithm that alters parameters to achieve goals.");
     OpenSim_DECLARE_PROPERTY(results_dir, std::string,
@@ -130,6 +132,21 @@ public:
 
     /// Construct a PSimTool from an XML file.
     PSimTool(const std::string& fileName);
+
+    /// Set the Model to optimize. We store a copy of this Model.
+    /// This overrides the Model specified via the base_model_file property.
+    void setBaseModel(const Model& baseModel) {
+        m_model.reset(baseModel.clone());
+    }
+    /// The Model to optimize. No optimizations have been applied to this
+    /// Model. If the Model was provided via the base_model_file property,
+    /// that Model can be obtained here.
+    const Model& getBaseModel() const {
+        if (!m_model) {
+            throw Exception("PSimTool does not have a base Model yet.");
+        }
+        return *m_model;
+    }
 
     // TODO print out the new model? that's what is optimized...
     /// Perform the predictive simulation optimization.
@@ -212,11 +229,24 @@ public:
             const StateTrajectory& states);
     /// @}
 
+    /// Use this to get absolute paths for (relative or absolute) paths that
+    /// are specified in the XML file for this object. If this object was not
+    /// created from an XML file, then the pathname is assumed to be relative
+    /// to the current working directory. This is particularly useful when
+    /// executing code from a directory other than the one containing the XML
+    /// file for this object.
+    std::string getAbsolutePathname(std::string pathname) const {
+        return SimTK::Pathname::getAbsolutePathname(pathname,
+                getDocumentFileName());
+    }
+
 private:
 
     void checkForUnusedInitialGuesses() const;
 
     void constructProperties();
+
+    SimTK::ClonePtr<Model> m_model;
 
 };
 
