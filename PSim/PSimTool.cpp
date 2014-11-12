@@ -22,7 +22,12 @@
  * -------------------------------------------------------------------------- */
 
 #include "PSimTool.h"
+
 #include "PSimDynamicOptimizationSolver.h"
+#include "StatesCollector.h"
+#include "StateTrajectory.h"
+
+#include <OpenSim/Simulation/Manager/Manager.h>
 
 namespace OpenSim {
 
@@ -181,11 +186,52 @@ void PSimTool::initialOptimizerParameterValuesAndLimits(
     }
 }
 
-PSimParameterValueSet PSimTool::run() const
+PSimParameterValueSet PSimTool::solve() const
 {
     // TODO print the updated model?
     // TODO print the objective values (at each iteration?)
     return get_solver().solve(*this);
+}
+
+double PSimTool::simulate(const PSimParameterValueSet& pvalset) const
+{
+    // Initialize model and apply model parameters.
+    // ============================================
+    // Create a copy of the base model.
+    Model model(getBaseModel());
+    if (get_visualize()) model.setUseVisualizer(true);
+    applyParametersToModel(pvalset, model);
+
+    // Add PSimGoal's to Model as ModelComponents. Do this after applying the
+    // parameters, as the goals may depend on the effect of parameters.
+    const auto goals = addGoalsToModel(model);
+
+    // Mechanism to record the trajectory of successful states.
+    // --------------------------------------------------------
+    StatesCollector* statesCollector = new StatesCollector();
+    statesCollector->setName("statesCollector");
+    model.addAnalysis(statesCollector);
+
+    // Generate an initial state. Must also be done after applying to model.
+    SimTK::State& state = model.initSystem();
+
+    // Now that the model is finalized for this sim., modify initial state.
+    // ====================================================================
+    applyParametersToInitState(pvalset, model, state);
+
+    // Simulate.
+    // =========
+    SimTK::RungeKuttaMersonIntegrator integrator(model.getSystem());
+    OpenSim::Manager manager(model, integrator);
+    manager.setWriteToStorage(false);
+    manager.setInitialTime(get_initial_time());
+    manager.setFinalTime(get_final_time());
+    manager.integrate(state);
+
+    // Compute objective function value with the goals.
+    // ================================================
+    const StateTrajectory& states = statesCollector->getStateTrajectory();
+    return evaluateGoals(goals, pvalset, states);
 }
 
 PSimParameterValueSet PSimTool::createParameterValueSet(

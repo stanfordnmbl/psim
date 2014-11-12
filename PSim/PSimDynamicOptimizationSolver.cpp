@@ -86,43 +86,8 @@ int PSimDynamicOptimizationSolver::OptimizerSystem::objectiveFunc(
     const PSimParameterValueSet pvalset(
             m_pstool.createParameterValueSet(parameters));
 
-    // Initialize model and apply model parameters.
-    // ============================================
-    // Create a copy of the base model.
-    Model model(m_pstool.getBaseModel());
-    if (m_pstool.get_visualize()) model.setUseVisualizer(true);
-    m_pstool.applyParametersToModel(pvalset, model);
-
-    // Add PSimGoal's to Model as ModelComponents. Do this after applying the
-    // parameters, as the goals may depend on the effect of parameters.
-    const auto goals = m_pstool.addGoalsToModel(model);
-
-    // Mechanism to record the trajectory of successful states.
-    // --------------------------------------------------------
-    StatesCollector* statesCollector = new StatesCollector();
-    statesCollector->setName("statesCollector");
-    model.addAnalysis(statesCollector);
-
-    // Generate an initial state. Must also be done after applying to model.
-    SimTK::State& state = model.initSystem();
-
-    // Now that the model is finalized for this sim., modify initial state.
-    // ====================================================================
-    m_pstool.applyParametersToInitState(pvalset, model, state);
-
-    // Simulate.
-    // =========
-    SimTK::RungeKuttaMersonIntegrator integrator(model.getSystem());
-    OpenSim::Manager manager(model, integrator);
-    manager.setWriteToStorage(false);
-    manager.setInitialTime(m_pstool.get_initial_time());
-    manager.setFinalTime(m_pstool.get_final_time());
-    manager.integrate(state);
-
-    // Compute objective function value with the goals.
-    // ================================================
-    const StateTrajectory& states = statesCollector->getStateTrajectory();
-    f = m_pstool.evaluateGoals(goals, pvalset, states);
+    // Simulate the system and evaluate the goals.
+    f = m_pstool.simulate(pvalset);
 
     return 0;
 }

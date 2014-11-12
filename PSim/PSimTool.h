@@ -151,7 +151,11 @@ public:
     // TODO print out the new model? that's what is optimized...
     /// Perform the predictive simulation optimization.
     /// @returns solution to the optimization.
-    PSimParameterValueSet run() const;
+    PSimParameterValueSet solve() const;
+
+    /// Conduct a forward simulation using the given parameter values.
+    /// @returns The evaluation of the goals.
+    double simulate(const PSimParameterValueSet& pvalset) const;
 
     /// @name Sending parameters to and from the Solver.
     /// These methods implicitly define how optimizer parameters map to and

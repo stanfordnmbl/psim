@@ -219,7 +219,7 @@ int main()
     pstool.setSerializeAllDefaults(true);
     pstool.print("PSimToolSetup.xml");
 
-    OpenSim::PSimParameterValueSet soln = pstool.run();
+    OpenSim::PSimParameterValueSet soln = pstool.solve();
     soln.print("solution.xml");
 
     return 0;

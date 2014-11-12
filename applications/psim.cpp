@@ -113,7 +113,7 @@ int main(int argc,char **argv)
     tool.print(tool.get_results_dir() + "./psim_setup.xml");
 
 	// RUN
-	PSimParameterValueSet solution = tool.run();
+	PSimParameterValueSet solution = tool.solve();
     solution.print(tool.get_results_dir() + "./solution.xml");
 
 	return 0;
