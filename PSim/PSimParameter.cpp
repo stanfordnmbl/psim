@@ -32,6 +32,7 @@ PSimParameter::PSimParameter() {
 }
 
 void PSimParameter::constructProperties() {
+    constructProperty_apply(true);
     constructProperty_optimize(true);
 
     constructProperty_lower_limit(-SimTK::Infinity);

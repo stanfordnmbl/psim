@@ -56,6 +56,9 @@ namespace OpenSim {
 * This affects how explorative the optimizer is for this parameter.
 * For a fixed standard deviation (CMAES step size, sigma),
 * a larger difference (upper_opt - lower_opt) causes more exploration.
+*
+* If the property <tt>optimize</tt> is true but <tt>apply</tt> is false, the
+* parameter is not optimized.
 */
 class OSIMPSIM_API PSimParameter : public Object
 {
@@ -64,6 +67,8 @@ public:
 
     /// @name Property declarations
     /// @{
+    OpenSim_DECLARE_PROPERTY(apply, bool,
+            "Apply parameter, whether or not it's being optimized.");
     OpenSim_DECLARE_PROPERTY(optimize, bool,
             "Optimize this parameter (false means default value is used).");
     OpenSim_DECLARE_PROPERTY(lower_limit, double,

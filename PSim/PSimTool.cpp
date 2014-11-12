@@ -71,7 +71,7 @@ unsigned int PSimTool::numOptimizerParameters() const
     unsigned int sum = 0;
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
         const PSimParameter & param = get_parameters(itp);
-        if (param.get_optimize()) {
+        if (param.get_apply() && param.get_optimize()) {
             sum += get_parameters(itp).numScalarParameters();
         }
     }
@@ -84,16 +84,19 @@ void PSimTool::applyParametersToModel(const PSimParameterValueSet& paramValues,
     // Indexes through tool parameters.
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
         const PSimParameter & param = get_parameters(itp);
-        // If the parameter is to be optimized.
-        if (param.get_optimize()) {
-            const double value = paramValues.get(param.getName()).get_value();
-            param.applyToModel(value, model);
-        }
-        else {
-            // Use the default value of the parameter.
-            // TODO if we decide not to create a new copy of the model, 
-            // we don't need to do this after the first call.
-            param.applyToModel(param.get_default_value(), model);
+        // If we should pay attention to this parameter.
+        if (param.get_apply()) {
+            // If the parameter is to be optimized.
+            if (param.get_optimize()) {
+                const double value = paramValues.get(param.getName()).get_value();
+                param.applyToModel(value, model);
+            }
+            else {
+                // Use the default value of the parameter.
+                // TODO if we decide not to create a new copy of the model, 
+                // we don't need to do this after the first call.
+                param.applyToModel(param.get_default_value(), model);
+            }
         }
     }
 }
@@ -105,17 +108,20 @@ void PSimTool::applyParametersToInitState(
     // Indexes through tool parameters.
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
         const PSimParameter & param = get_parameters(itp);
-        // If the parameter is to be optimized.
-        if (param.get_optimize()) {
-            const double value = paramValues.get(param.getName()).get_value();
-            param.applyToInitialState(value, model, initState);
-        }
-        else {
-            // Use the default value of the parameter.
-            // TODO if we decide not to create a new copy of the model, 
-            // we don't need to do this after the first call.
-            param.applyToInitialState(param.get_default_value(), model,
-                    initState);
+        // If we should pay attention to this parameter.
+        if (param.get_apply()) {
+            // If the parameter is to be optimized.
+            if (param.get_optimize()) {
+                const double value = paramValues.get(param.getName()).get_value();
+                param.applyToInitialState(value, model, initState);
+            }
+            else {
+                // Use the default value of the parameter.
+                // TODO if we decide not to create a new copy of the model, 
+                // we don't need to do this after the first call.
+                param.applyToInitialState(param.get_default_value(), model,
+                        initState);
+            }
         }
     }
 }
@@ -128,16 +134,19 @@ void PSimTool::applyParametersToStateCache(
     // Indexes through tool parameters.
     for (unsigned int itp = 0; itp < getProperty_parameters().size(); ++itp) {
         const PSimParameter & param = get_parameters(itp);
-        // If the parameter is to be optimized.
-        if (param.get_optimize()) {
-            const double value = paramValues.get(param.getName()).get_value();
-            param.applyToStateCache(value, model, s);
-        }
-        else {
-            // Use the default value of the parameter.
-            // TODO if we decide not to create a new copy of the model, 
-            // we don't need to do this after the first call.
-            param.applyToStateCache(param.get_default_value(), model, s);
+        // If we should pay attention to this parameter.
+        if (param.get_apply()) {
+            // If the parameter is to be optimized.
+            if (param.get_optimize()) {
+                const double value = paramValues.get(param.getName()).get_value();
+                param.applyToStateCache(value, model, s);
+            }
+            else {
+                // Use the default value of the parameter.
+                // TODO if we decide not to create a new copy of the model, 
+                // we don't need to do this after the first call.
+                param.applyToStateCache(param.get_default_value(), model, s);
+            }
         }
     }
 }
