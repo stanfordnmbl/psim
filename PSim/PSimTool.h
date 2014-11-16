@@ -224,7 +224,13 @@ public:
     /// @returns A vector of the Objectives thatare in the model.
     std::vector<const PSimGoal*> addGoalsToModel(Model& model) const;
 
-    /// Builds up the objective function using the <tt>goals</tt>.
+    /// Builds up the objective function using the <tt>goals</tt>. The goals
+    /// are evaluated in the order they are listed in the <tt>goals</tt>
+    /// property. If any of the goals returns a value of NaN, the subsequent
+    /// goals are skipped (to avoid the potentially costly and unnecessary of
+    /// subsequent goals), and we return a value of NaN. The solver decides
+    /// what to do if NaN is returned (e.g., report a large objective function
+    /// value).
     /// @param[in] pvalset The optimizer parameters.
     /// @param[in] finalState The state at the end of the simulation.
     static SimTK::Real evaluateGoals(

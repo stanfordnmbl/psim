@@ -52,7 +52,9 @@ public:
 
     PSimGoal();
 
-    /// Evaluates this goal.
+    /// Evaluates this goal. If the goal determines that the simulation
+    /// is unreasonable in some way and should not even be considered, then this
+    /// method returns NaN.
     SimTK::Real evaluate(const PSimParameterValueSet& pvalset,
             const StateTrajectory& states) const {
         // TODO Check if enabled here.
@@ -62,7 +64,9 @@ public:
 private:
 
     /// Concrete goals must implement this method. Implementors must not
-    /// account for the goal's weight.
+    /// account for the goal's weight. If the simulation is unreasonable,
+    /// NaN, and the subsequent goals will not be evaluated. The solver decides
+    /// what to do in this case.
     virtual SimTK::Real extendEvaluate(const PSimParameterValueSet& pvalset,
             const StateTrajectory& states) const = 0;
 

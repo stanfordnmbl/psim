@@ -318,6 +318,9 @@ SimTK::Real PSimTool::evaluateGoals(
         if (obj->get_enabled()) {
         // TODO move enabled check to PSimGoal.
             f += obj->get_weight() * obj->evaluate(pvalset, states);
+            if (SimTK::isNaN(f)) {
+                return SimTK::NaN;
+            }
         }
     }
     return f;
