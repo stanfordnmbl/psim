@@ -309,12 +309,12 @@ std::vector<const PSimGoal*> PSimTool::addGoalsToModel(Model& model) const
 }
 
 SimTK::Real PSimTool::evaluateGoals(
-        const std::vector<const PSimGoal*>& objectives,
+        const std::vector<const PSimGoal*>& goals,
         const PSimParameterValueSet& pvalset,
         const StateTrajectory& states)
 {
     SimTK::Real f = 0;
-    for (auto obj : objectives) {
+    for (const auto& obj : goals) {
         if (obj->get_enabled()) {
         // TODO move enabled check to PSimGoal.
             f += obj->get_weight() * obj->evaluate(pvalset, states);
