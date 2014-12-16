@@ -31,6 +31,10 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" OR
     endif()
 endif()
 
+# Debug postfix.
+# --------------
+set(CMAKE_DEBUG_POSTFIX "_d")
+
 add_subdirectory(doc)
 add_subdirectory(PSim)
 add_subdirectory(applications)

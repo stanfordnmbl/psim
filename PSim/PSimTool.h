@@ -110,6 +110,7 @@ public:
     OpenSim_DECLARE_PROPERTY(final_time, double,
             "The time at which the simulations end (seconds).");
     // TODO might belong in the solver; may not make sense for some solvers.
+    // TODO just remove as a property...just part of the API.
     OpenSim_DECLARE_PROPERTY(visualize, bool,
             "During solving, show the motion using the simbody-visualizer.");
     OpenSim_DECLARE_LIST_PROPERTY(parameters, PSimParameter,
