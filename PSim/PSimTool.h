@@ -80,6 +80,14 @@
 // convert predictivesim
 //      create new solver
 //      create parameters & goals.
+//
+//      CREATE PSimSolution object that contains:
+//          1. PSimParameterValueSet
+//          2. GoalValues
+//          ...
+//          3. create double pendulum example.
+//          4. create max height jump example. with single muscle.
+//              could use double pendulum.
 
 namespace OpenSim {
 
